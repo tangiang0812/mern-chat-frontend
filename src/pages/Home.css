@@ -5,3 +5,8 @@
   background-size: cover;
   background-repeat: no-repeat;
 }
+
+.home-message-icon {
+  margin-left: 10px;
+  display: inline-block;
+}
