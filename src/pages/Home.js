@@ -1,6 +1,7 @@
 import React from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import "./Home.css";
 
 function Home() {
   return (
@@ -19,6 +20,7 @@ function Home() {
           </LinkContainer>
         </div>
       </Col>
+      <Col md={6} className="home__bg"></Col>
     </Row>
   );
 }
