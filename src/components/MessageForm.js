@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import "./MessageForm.css";
 
 function MessageForm() {
@@ -7,9 +8,19 @@ function MessageForm() {
     e.preventDefault();
   }
 
+  const user = useSelector((state) => state.user);
+
   return (
     <>
-      <div className="messages-output"></div>
+      <div className="messages-output">
+        {" "}
+        {!user && (
+          <div style={{ margin: "20px" }} className="alert alert-danger">
+            You are not logged in
+          </div>
+        )}
+      </div>
+
       <Form onSubmit={handleSubmit}>
         <Row>
           <Col md={11}>
@@ -17,11 +28,17 @@ function MessageForm() {
               <Form.Control
                 type="text"
                 placeholder="Your message"
+                disabled={!user}
               ></Form.Control>
             </Form.Group>
           </Col>
           <Col md={1}>
-            <Button variant="primary" type="submit" style={{ width: "100%" }}>
+            <Button
+              disabled={!user}
+              variant="primary"
+              type="submit"
+              style={{ width: "100%" }}
+            >
               <i className="fas fa-paper-plane"></i>
             </Button>
           </Col>
