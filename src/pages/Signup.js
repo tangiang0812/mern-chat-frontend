@@ -1,27 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSignupUserMutation } from "../services/appApi";
 
 function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
+  const navigate = useNavigate();
+
+  const [signupUser, { isLoading, error }] = useSignupUserMutation();
+
   const [validated, setValidated] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSignup = async (event) => {
     const form = event.currentTarget;
+    event.preventDefault();
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
     }
-
     setValidated(true);
+    signupUser({ name, email, password }).then(({ data }) => {
+      if (data) {
+        console.log(data);
+        navigate("/chat");
+      }
+    });
   };
 
-  function handleSignup(e) {
-    e.preventDefault();
-  }
+  // function handleSignup(e) {
+  //   e.preventDefault();
+  // }
 
   useEffect(() => {
     console.log(email, password, name);
@@ -33,7 +43,7 @@ function Signup() {
         <Col className="offset-3 col-6">
           <Card style={{ width: "100%" }} className="mt-3">
             <Card.Body>
-              <Form noValidate validated={validated} onSubmit={handleSubmit}>
+              <Form noValidate validated={validated} onSubmit={handleSignup}>
                 <Form.Group className="mb-3" controlId="formBasicName">
                   <Form.Label>Your Name</Form.Label>
                   <Form.Control

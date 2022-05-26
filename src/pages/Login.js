@@ -1,37 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { Container, Form, Button, Row, Col, Card } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useLoginUserMutation } from "../services/appApi";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigate = useNavigate();
+
+  const [loginUser, { isLoading, error }] = useLoginUserMutation();
   const [validated, setValidated] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleLogin = (event) => {
     const form = event.currentTarget;
+    event.preventDefault();
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
     }
-
+    loginUser({ email, password }).then(({ data }) => {
+      if (data) {
+        console.log(data);
+        navigate("/chat");
+      }
+    });
     setValidated(true);
   };
 
-  function handleLogin(e) {
-    e.preventDefault();
-  }
+  // function handleLogin(e) {
+  //   e.preventDefault();
+  // }
 
   useEffect(() => {
     console.log(email, password);
   }, [email, password]);
+
   return (
     <Container>
       <Row>
         <Col className="offset-3 col-6">
           <Card style={{ width: "100%" }} className="mt-3">
             <Card.Body>
-              <Form noValidate validated={validated} onSubmit={handleSubmit}>
+              <Form noValidate validated={validated} onSubmit={handleLogin}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Email address</Form.Label>
                   <Form.Control
