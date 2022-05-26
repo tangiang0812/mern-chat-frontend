@@ -12,7 +12,7 @@ function Login() {
   const [loginUser, { isLoading, error }] = useLoginUserMutation();
   const [validated, setValidated] = useState(false);
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     const form = event.currentTarget;
     event.preventDefault();
     if (form.checkValidity() === false) {
