@@ -50,6 +50,21 @@ const appApi = createApi({
         method: "GET",
       }),
     }),
+
+    searchUsers: builder.query({
+      query: (keyword) => ({
+        url: `/api/user?search=${keyword}`,
+        method: "GET",
+      }),
+    }),
+
+    accessChat: builder.mutation({
+      query: (payload) => ({
+        url: "/api/chat/",
+        method: "POST",
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -57,8 +72,10 @@ export const {
   useSignupUserMutation,
   useLoginUserMutation,
   useLogoutUserMutation,
-  useFetchChatsQuery,
+  // useFetchChatsQuery,
   useLazyFetchChatsQuery,
+  useLazySearchUsersQuery,
+  useAccessChatMutation,
 } = appApi;
 
 export default appApi;

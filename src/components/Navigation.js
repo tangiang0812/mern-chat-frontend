@@ -23,7 +23,7 @@ function Navigation() {
   const handleLogout = async (event) => {
     event.preventDefault();
     await logoutUser();
-    window.location.replace("/");
+    window.location.replace("/"); // important line :D
   };
   return (
     <Box

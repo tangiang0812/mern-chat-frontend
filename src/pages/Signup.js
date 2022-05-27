@@ -40,7 +40,7 @@ function Signup() {
     signupUser({ name, email, password }).then(({ data }) => {
       if (data) {
         toast({
-          title: "Login Success!",
+          title: "Signup Success!",
           status: "success",
           duration: 5000,
           isClosable: true,
