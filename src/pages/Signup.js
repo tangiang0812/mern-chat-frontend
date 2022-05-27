@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
+import {
+  Box,
+  Button,
+  Container,
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputRightElement,
+  VStack,
+} from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSignupUserMutation } from "../services/appApi";
 
@@ -7,6 +17,9 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+
+  const [show, setShow] = useState(false);
+  const handleClick = () => setShow(!show);
 
   const navigate = useNavigate();
 
@@ -38,72 +51,82 @@ function Signup() {
   }, [email, password, name]);
 
   return (
-    <Container>
-      <Row>
-        <Col className="offset-3 col-6">
-          <Card style={{ width: "100%" }} className="mt-3">
-            <Card.Body>
-              <Form noValidate validated={validated} onSubmit={handleSignup}>
-                <Form.Group className="mb-3" controlId="formBasicName">
-                  <Form.Label>Your Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter Your Name"
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
-                    required
-                  />
-                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                  <Form.Control.Feedback type="invalid">
-                    Please enter your name.
-                  </Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label>Email address</Form.Label>
-                  <Form.Control
-                    type="email"
-                    placeholder="Enter email"
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                    required
-                  />
-                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                  <Form.Control.Feedback type="invalid">
-                    Invalid email address.
-                  </Form.Control.Feedback>
-                </Form.Group>
+    <Container maxW="xl" centerContent>
+      <Box
+        bg="white"
+        w="100%"
+        p={4}
+        borderRadius="lg"
+        borderWidth="1px"
+        m="40px 0 15px 0"
+      >
+        <VStack spacing="5px">
+          <FormControl id="first-name" isRequired>
+            <FormLabel>Name</FormLabel>
+            <Input
+              placeholder="Enter your name"
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+            />
+          </FormControl>
 
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Password"
-                    onChange={(e) => setPassword(e.target.value)}
-                    value={password}
-                    required
-                  />
-                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-                  <Form.Control.Feedback type="invalid">
-                    Please enter your password.
-                  </Form.Control.Feedback>
-                </Form.Group>
-                {/* <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                  <Form.Check type="checkbox" label="Check me out" />
-                </Form.Group> */}
-                <Button variant="primary" type="submit">
-                  Signup
+          <FormControl id="email" isRequired>
+            <FormLabel>Email</FormLabel>
+            <Input
+              placeholder="Enter your email"
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+            />
+          </FormControl>
+
+          <FormControl id="password" isRequired>
+            <FormLabel>Password</FormLabel>
+            <InputGroup>
+              <Input
+                type={show ? "text" : "password"}
+                placeholder="Enter password"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+              />
+              <InputRightElement width="4.5rem">
+                <Button h="1.75rem" size="sm" onClick={handleClick}>
+                  {show ? "Hide" : "Show"}
                 </Button>
-                <div className="mt-3">
-                  <p className="text-center">
-                    {" "}
-                    Already have an account ? <Link to="/login">Login</Link>
-                  </p>
-                </div>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+              </InputRightElement>
+            </InputGroup>
+          </FormControl>
+
+          {/* <FormControl id="pic">
+        <FormLabel>Profile Picture</FormLabel>
+        <Input
+          type="file"
+          p={1.5}
+          accept="image/*"
+          onChange={(e) => postDetail(e.target.files[0])}
+          placeholder="Upload Picture"
+        ></Input>
+      </FormControl> */}
+          <Button
+            colorScheme="blue"
+            width="100%"
+            color="white"
+            style={{ marginTop: 25 }}
+            onClick={handleSignup}
+            isLoading={isLoading}
+          >
+            Signup
+          </Button>
+          <div className="mt-3">
+            <p className="text-center">
+              {" "}
+              Don't have an account ? <Link to="/login">Login</Link>
+            </p>
+          </div>
+        </VStack>
+      </Box>
     </Container>
   );
 }

@@ -18,7 +18,11 @@ function Navigation() {
       <Container>
         <LinkContainer to="/">
           <Navbar.Brand>
-            <img src={download} style={{ width: 50, height: 50 }} />
+            <img
+              src={download}
+              alt="App Logo"
+              style={{ width: 50, height: 50 }}
+            />
           </Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -38,6 +42,7 @@ function Navigation() {
                   <>
                     <img
                       src={user.picture}
+                      alt={user.name}
                       style={{
                         width: 30,
                         height: 30,
