@@ -6,6 +6,16 @@ const appApi = createApi({
   reducerPath: "appApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:4000",
+    prepareHeaders: (headers, { getState }) => {
+      const token = getState().user?.token;
+
+      // If we have a token set in state, let's assume that we should be passing it.
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+
+      return headers;
+    },
   }),
   endpoints: (builder) => ({
     // create user
@@ -28,10 +38,12 @@ const appApi = createApi({
 
     //logout
     logoutUser: builder.mutation({
-      query: (payload) => ({
+      query: () => ({
         url: "/api/user/logout",
         method: "DELETE",
-        body: payload,
+        headers: {
+          "content-type": "text/plain",
+        },
       }),
     }),
   }),
