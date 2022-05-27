@@ -7,25 +7,35 @@ import Signup from "./pages/Signup";
 import Chat from "./pages/Chat";
 import { useSelector } from "react-redux";
 import { ChakraProvider } from "@chakra-ui/react";
+import { AppContext } from "./context/appContext";
+import { useState } from "react";
 
 function App() {
   const user = useSelector((state) => state.user);
+  const [selectedChat, setSelectedChat] = useState();
+  const [chats, setChats] = useState([]);
+
   return (
-    <BrowserRouter>
-      <ChakraProvider>
-        <Navigation></Navigation>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          {!user && (
-            <>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-            </>
-          )}
-          <Route path="/chat" element={<Chat />} />
-        </Routes>
-      </ChakraProvider>
-    </BrowserRouter>
+    <AppContext.Provider
+      value={{ selectedChat, setSelectedChat, chats, setChats }}
+    >
+      <BrowserRouter>
+        <ChakraProvider>
+          <Navigation></Navigation>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {!user && (
+              <>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+              </>
+            )}
+            <Route path="/chat" element={<Chat />} />
+          </Routes>
+        </ChakraProvider>
+      </BrowserRouter>
+      //{" "}
+    </AppContext.Provider>
   );
 }
 

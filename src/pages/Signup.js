@@ -8,6 +8,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
@@ -25,6 +26,8 @@ function Signup() {
 
   const [signupUser, { isLoading, error }] = useSignupUserMutation();
 
+  const toast = useToast();
+
   const [validated, setValidated] = useState(false);
 
   const handleSignup = async (event) => {
@@ -36,8 +39,23 @@ function Signup() {
     setValidated(true);
     signupUser({ name, email, password }).then(({ data }) => {
       if (data) {
-        console.log(data);
+        toast({
+          title: "Login Success!",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
         navigate("/chat");
+      } else if (error) {
+        toast({
+          title: "Error Occured!",
+          description: error.data.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
       }
     });
   };

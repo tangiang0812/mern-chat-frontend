@@ -41,9 +41,13 @@ const appApi = createApi({
       query: () => ({
         url: "/api/user/logout",
         method: "DELETE",
-        headers: {
-          "content-type": "text/plain",
-        },
+      }),
+    }),
+
+    fetchChats: builder.query({
+      query: () => ({
+        url: "/api/chat/",
+        method: "GET",
       }),
     }),
   }),
@@ -53,6 +57,8 @@ export const {
   useSignupUserMutation,
   useLoginUserMutation,
   useLogoutUserMutation,
+  useFetchChatsQuery,
+  useLazyFetchChatsQuery,
 } = appApi;
 
 export default appApi;
