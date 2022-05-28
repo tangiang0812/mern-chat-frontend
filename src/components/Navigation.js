@@ -30,7 +30,6 @@ function Navigation() {
       display="flex"
       justifyContent="space-between"
       alignItems="center"
-      flex
       bg="white"
       w="100%"
       p="5px 10px 5px 10px"

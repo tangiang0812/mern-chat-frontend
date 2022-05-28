@@ -117,7 +117,7 @@ function Sidebar() {
 
   return (
     <Box
-      d={{ base: selectedChat ? "none" : "flex", md: "flex" }}
+      display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDir="column"
       alignItems="center"
       p={3}
@@ -125,14 +125,17 @@ function Sidebar() {
       w={{ base: "100%", md: "31%" }}
       borderRadius="lg"
       borderWidth="1px"
+      overflowY="hidden"
     >
       <Box
+        width="100%"
         display="flex"
         pb={2}
         borderRadius="lg"
         justifyContent="space-between"
+        alignItems="center"
       >
-        <InputGroup mr={2}>
+        <InputGroup mr={3}>
           <InputLeftElement
             pointerEvents="none"
             children={<Search2Icon color="gray.300" />}
@@ -148,7 +151,6 @@ function Sidebar() {
         </InputGroup>
         {isSearching ? (
           <Button
-            d="flex"
             fontSize={{ base: "17px", md: "10px", lg: "17px" }}
             onClick={(e) => {
               setIsSearching(false);
@@ -160,10 +162,7 @@ function Sidebar() {
           </Button>
         ) : (
           <GroupChatModal>
-            <Button
-              d="flex"
-              fontSize={{ base: "17px", md: "10px", lg: "17px" }}
-            >
+            <Button fontSize={{ base: "17px", md: "10px", lg: "17px" }}>
               <AddIcon></AddIcon>
             </Button>
           </GroupChatModal>
@@ -177,7 +176,7 @@ function Sidebar() {
         w="100%"
         h="100%"
         borderRadius="lg"
-        overflowY="hidden"
+        overflowY="auto"
       >
         {isSearching ? (
           <>
@@ -196,7 +195,7 @@ function Sidebar() {
             {accessLoading && <Spinner ml="auto" d="flex" />}
           </>
         ) : chats ? (
-          <Stack overflowY="auto">
+          <Stack>
             {chats.map((chat) => (
               <Box
                 onClick={() => setSelectedChat(chat)}

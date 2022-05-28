@@ -185,7 +185,12 @@ function GroupChatModal({ children }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleCreateGroup}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={handleCreateGroup}
+              isLoading={groupLoading}
+            >
               Create
             </Button>
           </ModalFooter>

@@ -34,7 +34,6 @@ function App() {
           </Routes>
         </ChakraProvider>
       </BrowserRouter>
-      //{" "}
     </AppContext.Provider>
   );
 }
