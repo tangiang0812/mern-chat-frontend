@@ -153,6 +153,7 @@ function Sidebar() {
             onClick={(e) => {
               setIsSearching(false);
               setSearch("");
+              setSearchResult([]);
             }}
           >
             <CloseIcon></CloseIcon>
@@ -192,7 +193,7 @@ function Sidebar() {
                 ></UserListItem>
               ))
             )}
-            {accessLoading && <Spinner ml="auto" d="flext" />}
+            {accessLoading && <Spinner ml="auto" d="flex" />}
           </>
         ) : chats ? (
           <Stack overflowY="auto">
@@ -206,6 +207,7 @@ function Sidebar() {
                 py={2}
                 borderRadius="lg"
                 key={chat._id}
+                height="45px"
               >
                 <Text>
                   {!chat.isGroupChat

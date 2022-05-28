@@ -65,6 +65,14 @@ const appApi = createApi({
         body: payload,
       }),
     }),
+
+    createGroupChat: builder.mutation({
+      query: (payload) => ({
+        url: "/api/chat/group",
+        method: "POST",
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -76,6 +84,7 @@ export const {
   useLazyFetchChatsQuery,
   useLazySearchUsersQuery,
   useAccessChatMutation,
+  useCreateGroupChatMutation,
 } = appApi;
 
 export default appApi;

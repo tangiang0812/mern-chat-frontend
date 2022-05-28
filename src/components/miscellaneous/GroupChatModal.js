@@ -17,8 +17,12 @@ import {
 import React, { useContext, useState } from "react";
 import { useSelector } from "react-redux";
 import { AppContext } from "../../context/appContext";
-// import UserBadgeItem from "../UserAvater/UserBadgeItem";
-// import UserListItem from "../UserAvater/UserListItem";
+import {
+  useCreateGroupChatMutation,
+  useLazySearchUsersQuery,
+} from "../../services/appApi";
+import UserListItem from "../UserAvater/UserListItem";
+import UserBadgeItem from "../UserAvater/UserBadgeItem";
 
 function GroupChatModal({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -30,111 +34,98 @@ function GroupChatModal({ children }) {
 
   const toast = useToast();
 
-  const use = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user);
 
   const { chats, setChats } = useContext(AppContext);
 
-  const handleSearch = () => {};
-  const handleDelete = () => {};
+  const [searchUsers, { isLoading: searchLoading, error: searchError }] =
+    useLazySearchUsersQuery();
 
-  const handleSubmit = () => {};
-  const handleGroup = () => {};
+  const [createGroupChat, { isLoading: groupLoading, error: groupError }] =
+    useCreateGroupChatMutation();
 
-  // const handleGroup = (userToAdd) => {
-  //   if (selectedUsers.includes(userToAdd)) {
-  //     toast({
-  //       title: "User already added",
-  //       status: "warning",
-  //       duration: 5000,
-  //       isClosable: true,
-  //       position: "top",
-  //     });
-  //     return;
-  //   }
+  const handleGroup = (userToAdd) => {
+    if (selectedUsers.includes(userToAdd)) {
+      toast({
+        title: "User already added",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
+    setSelectedUsers([...selectedUsers, userToAdd]);
+  };
 
-  //   setSelectedUsers([...selectedUsers, userToAdd]);
-  // };
+  const handleDelete = (delUser) => {
+    setSelectedUsers(selectedUsers.filter((sel) => sel._id !== delUser._id));
+  };
 
-  // const handleDelete = (delUser) => {
-  //   setSelectedUsers(selectedUsers.filter((sel) => sel._id !== delUser._id));
-  // };
+  const handleSearch = async (keyword) => {
+    setSearch(keyword);
+    searchUsers(keyword).then(({ data, error }) => {
+      if (data) {
+        setSearchResult(data);
+      } else if (error) {
+        toast({
+          title: "Error searching users",
+          description: error.data.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom-left",
+        });
+      }
+    });
+  };
 
-  // const handleSearch = async (query) => {
-  //   setSearch(query);
-  //   if (!query) {
-  //     return;
-  //   }
+  const handleCreateGroup = async () => {
+    if (!groupChatName || !selectedUsers) {
+      toast({
+        title: "Please fill all the fields",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
 
-  //   try {
-  //     setLoading(true);
-  //     const config = {
-  //       headers: {
-  //         Authorization: `Bearer ${user.token}`,
-  //       },
-  //     };
-  //     const { data } = await axios.get(`/api/user?search=${search}`, config);
-  //     console.log(data);
-  //     setLoading(false);
-  //     setSearchResult(data);
-  //   } catch (error) {
-  //     toast({
-  //       title: "Error Occured!",
-  //       description: "Failed to Load the Search Results",
-  //       status: "error",
-  //       duration: 5000,
-  //       isClosable: true,
-  //       position: "bottom-left",
-  //     });
-  //   }
-  // };
+    const payload = {
+      name: groupChatName,
+      users: selectedUsers.map((u) => u._id),
+    };
 
-  // const handleSubmit = async () => {
-  //   if (!groupChatName || !selectedUsers) {
-  //     toast({
-  //       title: "Please fill all the feilds",
-  //       status: "warning",
-  //       duration: 5000,
-  //       isClosable: true,
-  //       position: "top",
-  //     });
-  //     return;
-  //   }
+    createGroupChat(payload).then(({ data, error }) => {
+      if (data) {
+        setChats([data, ...chats]);
 
-  //   try {
-  //     const config = {
-  //       headers: {
-  //         Authorization: `Bearer ${user.token}`,
-  //       },
-  //     };
-  //     const { data } = await axios.post(
-  //       `/api/chat/group`,
-  //       {
-  //         name: groupChatName,
-  //         users: selectedUsers.map((u) => u._id),
-  //         // users: JSON.stringify(selectedUsers.map((u) => u._id)),
-  //       },
-  //       config
-  //     );
-  //     setChats([data, ...chats]);
-  //     onClose();
-  //     toast({
-  //       title: "New Group Chat Created!",
-  //       status: "success",
-  //       duration: 5000,
-  //       isClosable: true,
-  //       position: "bottom",
-  //     });
-  //   } catch (error) {
-  //     toast({
-  //       title: "Failed to Create the Chat!",
-  //       description: error.response.data,
-  //       status: "error",
-  //       duration: 5000,
-  //       isClosable: true,
-  //       position: "bottom",
-  //     });
-  //   }
-  // };
+        onClose();
+
+        setGroupChatName("");
+        setSelectedUsers([]);
+        setSearchResult([]);
+        setSearch("");
+        toast({
+          title: "New Group Chat Created!",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      } else if (error) {
+        toast({
+          title: "Failed to Create the Chat!",
+          description: error.data.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      }
+    });
+  };
 
   return (
     <>
@@ -156,6 +147,7 @@ function GroupChatModal({ children }) {
               <Input
                 placeholder="Chat Name"
                 mb={3}
+                value={groupChatName}
                 onChange={(e) => setGroupChatName(e.target.value)}
               />
             </FormControl>
@@ -163,19 +155,20 @@ function GroupChatModal({ children }) {
               <Input
                 placeholder="Add Users"
                 mb={1}
+                value={search}
                 onChange={(e) => handleSearch(e.target.value)}
               />
             </FormControl>
             <Box w="100%" d="flex" flexWrap="wrap">
-              {/* {selectedUsers.map((u) => (
+              {selectedUsers.map((u) => (
                 <UserBadgeItem
                   key={u._id}
                   user={u}
                   handleFunction={() => handleDelete(u)}
                 />
-              ))} */}
+              ))}
             </Box>
-            {/* {loading ? (
+            {searchLoading ? (
               // <ChatLoading />
               <div>Loading...</div>
             ) : (
@@ -188,11 +181,11 @@ function GroupChatModal({ children }) {
                     handleFunction={() => handleGroup(user)}
                   />
                 ))
-            )} */}
+            )}
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleSubmit}>
+            <Button colorScheme="blue" mr={3} onClick={handleCreateGroup}>
               Create
             </Button>
           </ModalFooter>
