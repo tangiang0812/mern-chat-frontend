@@ -14,10 +14,21 @@ function App() {
   const user = useSelector((state) => state.user);
   const [selectedChat, setSelectedChat] = useState();
   const [chats, setChats] = useState([]);
+  const [showDetail, setShowDetail] = useState(false);
+  const [fetchAgain, setFetchAgain] = useState(false);
 
   return (
     <AppContext.Provider
-      value={{ selectedChat, setSelectedChat, chats, setChats }}
+      value={{
+        selectedChat,
+        setSelectedChat,
+        chats,
+        setChats,
+        showDetail,
+        setShowDetail,
+        fetchAgain,
+        setFetchAgain,
+      }}
     >
       <BrowserRouter>
         <ChakraProvider>

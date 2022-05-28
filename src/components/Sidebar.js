@@ -1,5 +1,6 @@
 import { AddIcon, CloseIcon, Search2Icon } from "@chakra-ui/icons";
 import {
+  Avatar,
   Box,
   Button,
   Input,
@@ -33,18 +34,26 @@ function Sidebar() {
   const [isSearching, setIsSearching] = useState(false);
   const [searchResult, setSearchResult] = useState([]);
 
-  const { selectedChat, setSelectedChat, chats, setChats } =
+  const { selectedChat, setSelectedChat, chats, setChats, fetchAgain } =
     useContext(AppContext);
 
   const user = useSelector((state) => state.user);
 
   const toast = useToast();
 
-  const [fetchChats, { isLoading: fetchLoading, error: fetchError }] =
-    useLazyFetchChatsQuery();
+  const [
+    fetchChats,
+    { isFetching: fetchFetching, isLoading: fetchLoading, error: fetchError },
+  ] = useLazyFetchChatsQuery();
 
-  const [searchUsers, { isLoading: searchLoading, error: searchError }] =
-    useLazySearchUsersQuery();
+  const [
+    searchUsers,
+    {
+      isFetching: searchFetching,
+      isLoading: searchLoading,
+      error: searchError,
+    },
+  ] = useLazySearchUsersQuery();
 
   const [accessChat, { isLoading: accessLoading, error: accessError }] =
     useAccessChatMutation();
@@ -54,6 +63,13 @@ function Sidebar() {
       if (data) {
         console.log(data);
         setChats(data);
+        if (selectedChat) {
+          for (let chat of data) {
+            if (chat._id === selectedChat._id) {
+              setSelectedChat(chat);
+            }
+          }
+        }
       } else if (error) {
         toast({
           title: "Error fetching chats",
@@ -89,9 +105,12 @@ function Sidebar() {
     console.log("giangdeptrai");
     accessChat({ userId }).then(({ data, error }) => {
       if (data) {
-        if (!chats.find((chat) => chat._id === data._id))
+        if (!chats.find((chat) => chat._id === data._id)) {
           setChats([data, ...chats]);
-        setSelectedChat(data);
+          setSelectedChat(data);
+        } else {
+          setSelectedChat(chats.find((chat) => chat._id === data._id));
+        }
         setSearch("");
         setIsSearching(false);
       } else if (error) {
@@ -109,7 +128,7 @@ function Sidebar() {
 
   useEffect(() => {
     handleFetchChats();
-  }, []);
+  }, [fetchAgain]);
 
   useEffect(() => {
     console.log(isSearching);
@@ -117,12 +136,14 @@ function Sidebar() {
 
   return (
     <Box
-      display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
+      // display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
+      display="flex"
       flexDir="column"
       alignItems="center"
       p={3}
       bg="white"
-      w={{ base: "100%", md: "31%" }}
+      // w={{ base: "100%", md: "31%" }}
+      w="20%"
       borderRadius="lg"
       borderWidth="1px"
       overflowY="hidden"
@@ -143,7 +164,6 @@ function Sidebar() {
           <Input
             placeholder="Search by name or email"
             // mr={2}
-            value={search}
             bg="#F8F8F8"
             onChange={(e) => handleSearch(e.target.value)}
             onClick={() => setIsSearching(true)}
@@ -169,7 +189,7 @@ function Sidebar() {
         )}
       </Box>
       <Box
-        d="flex"
+        display="flex"
         flexDir="column"
         p={3}
         bg="#F8F8F8"
@@ -180,8 +200,7 @@ function Sidebar() {
       >
         {isSearching ? (
           <>
-            {" "}
-            {searchLoading ? (
+            {searchFetching ? (
               <ChatLoading> </ChatLoading>
             ) : (
               searchResult?.map((user) => (
@@ -192,13 +211,15 @@ function Sidebar() {
                 ></UserListItem>
               ))
             )}
-            {accessLoading && <Spinner ml="auto" d="flex" />}
+            {accessLoading && <Spinner m="auto" display="flex" />}
           </>
-        ) : chats ? (
+        ) : !fetchLoading ? (
           <Stack>
             {chats.map((chat) => (
               <Box
-                onClick={() => setSelectedChat(chat)}
+                onClick={() => {
+                  setSelectedChat(chat);
+                }}
                 cursor="pointer"
                 bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
                 color={selectedChat === chat ? "white" : "black"}
@@ -206,11 +227,19 @@ function Sidebar() {
                 py={2}
                 borderRadius="lg"
                 key={chat._id}
-                height="45px"
+                display="flex"
+                flexDirection="row"
               >
+                <Avatar
+                  mr={2}
+                  size="sm"
+                  cursor="pointer"
+                  name={chat.chatName}
+                  src={chat.users[0].picture}
+                />
                 <Text>
                   {!chat.isGroupChat
-                    ? getSender(user, chat.users)
+                    ? getSender(user, chat.users).name
                     : chat.chatName}
                 </Text>
                 {chat.latestMessage && (
@@ -225,8 +254,8 @@ function Sidebar() {
             ))}
           </Stack>
         ) : (
-          // <ChatLoading />
-          <></>
+          <ChatLoading />
+          // <></>
         )}
       </Box>
     </Box>

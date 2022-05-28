@@ -18,13 +18,15 @@ import React, { useContext, useState } from "react";
 import { useSelector } from "react-redux";
 import { AppContext } from "../../context/appContext";
 import {
+  useAddToGroupMutation,
   useCreateGroupChatMutation,
   useLazySearchUsersQuery,
+  useRenameGroupMutation,
 } from "../../services/appApi";
 import UserListItem from "../UserAvater/UserListItem";
 import UserBadgeItem from "../UserAvater/UserBadgeItem";
 
-function GroupChatModal({ children }) {
+function AddUserModal({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [groupChatName, setGroupChatName] = useState();
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -36,7 +38,7 @@ function GroupChatModal({ children }) {
 
   const user = useSelector((state) => state.user);
 
-  const { chats, setChats, setFetchAgain, fetchAgain } = useContext(AppContext);
+  const { selectedChat, setFetchAgain, fetchAgain } = useContext(AppContext);
 
   const [
     searchUsers,
@@ -47,8 +49,8 @@ function GroupChatModal({ children }) {
     },
   ] = useLazySearchUsersQuery();
 
-  const [createGroupChat, { isLoading: groupLoading, error: groupError }] =
-    useCreateGroupChatMutation();
+  const [addToGroup, { isLoading: addLoading, error: addError }] =
+    useAddToGroupMutation();
 
   const handleClose = () => {
     setGroupChatName("");
@@ -94,8 +96,8 @@ function GroupChatModal({ children }) {
     });
   };
 
-  const handleCreateGroup = async () => {
-    if (!groupChatName || !selectedUsers) {
+  const handleAddToGroup = async () => {
+    if (!selectedUsers) {
       toast({
         title: "Please fill all the fields",
         status: "warning",
@@ -107,17 +109,17 @@ function GroupChatModal({ children }) {
     }
 
     const payload = {
-      name: groupChatName,
-      users: selectedUsers.map((u) => u._id),
+      chatId: selectedChat._id,
+      userId: selectedUsers.map((u) => u._id),
     };
 
-    createGroupChat(payload).then(({ data, error }) => {
+    addToGroup(payload).then(({ data, error }) => {
       if (data) {
         setFetchAgain(!fetchAgain);
         // setChats([data, ...chats]);
         handleClose();
         toast({
-          title: "New Group Chat Created!",
+          title: "Add user(s) successfully",
           status: "success",
           duration: 5000,
           isClosable: true,
@@ -125,7 +127,7 @@ function GroupChatModal({ children }) {
         });
       } else if (error) {
         toast({
-          title: "Failed to Create the Chat!",
+          title: "Failed to add user(s)!",
           description: error.data.message,
           status: "error",
           duration: 5000,
@@ -138,7 +140,9 @@ function GroupChatModal({ children }) {
 
   return (
     <>
-      <span onClick={onOpen}>{children}</span>
+      <span onClick={onOpen} style={{ width: "100%" }}>
+        {children}
+      </span>
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={handleClose}>
         <ModalOverlay />
         <ModalContent>
@@ -152,13 +156,6 @@ function GroupChatModal({ children }) {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody d="flex" flexDir="column" alignItems="center">
-            <FormControl>
-              <Input
-                placeholder="Chat Name"
-                mb={3}
-                onChange={(e) => setGroupChatName(e.target.value)}
-              />
-            </FormControl>
             <FormControl>
               <Input
                 placeholder="Add Users"
@@ -195,8 +192,8 @@ function GroupChatModal({ children }) {
             <Button
               colorScheme="blue"
               mr={3}
-              onClick={handleCreateGroup}
-              isLoading={groupLoading}
+              onClick={handleAddToGroup}
+              isLoading={addLoading}
             >
               Create
             </Button>
@@ -207,4 +204,4 @@ function GroupChatModal({ children }) {
   );
 }
 
-export default GroupChatModal;
+export default AddUserModal;

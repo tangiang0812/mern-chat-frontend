@@ -73,6 +73,30 @@ const appApi = createApi({
         body: payload,
       }),
     }),
+
+    removeFromGroup: builder.mutation({
+      query: (payload) => ({
+        url: "/api/chat/groupremove",
+        method: "PUT",
+        body: payload,
+      }),
+    }),
+
+    addToGroup: builder.mutation({
+      query: (payload) => ({
+        url: "/api/chat/groupadd",
+        method: "PUT",
+        body: payload,
+      }),
+    }),
+
+    renameGroup: builder.mutation({
+      query: (payload) => ({
+        url: "/api/chat/rename",
+        method: "PUT",
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -85,6 +109,9 @@ export const {
   useLazySearchUsersQuery,
   useAccessChatMutation,
   useCreateGroupChatMutation,
+  useRemoveFromGroupMutation,
+  useRenameGroupMutation,
+  useAddToGroupMutation,
 } = appApi;
 
 export default appApi;
