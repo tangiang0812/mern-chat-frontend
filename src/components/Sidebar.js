@@ -25,14 +25,12 @@ import {
 import GroupChatModal from "./miscellaneous/GroupChatModal";
 import UserListItem from "./UserAvater/UserListItem";
 import ChatLoading from "./UserAvater/ChatLoading";
+import SearchModal from "./miscellaneous/SearchModal";
 
 // import GroupChatModal from "./miscellaneous/GroupChatModal";
 
 function Sidebar() {
   const [loggedUser, setLoggedUser] = useState();
-  const [search, setSearch] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchResult, setSearchResult] = useState([]);
 
   const { selectedChat, setSelectedChat, chats, setChats, fetchAgain } =
     useContext(AppContext);
@@ -46,18 +44,6 @@ function Sidebar() {
     { isFetching: fetchFetching, isLoading: fetchLoading, error: fetchError },
   ] = useLazyFetchChatsQuery();
 
-  const [
-    searchUsers,
-    {
-      isFetching: searchFetching,
-      isLoading: searchLoading,
-      error: searchError,
-    },
-  ] = useLazySearchUsersQuery();
-
-  const [accessChat, { isLoading: accessLoading, error: accessError }] =
-    useAccessChatMutation();
-
   const handleFetchChats = () => {
     fetchChats().then(({ data, error }) => {
       if (data) {
@@ -69,6 +55,7 @@ function Sidebar() {
               setSelectedChat(chat);
             }
           }
+          // setSelectedChat(chats.find((chat) => chat._id === selectedChat._id)); :) no idea why this line doesn't get the job done
         }
       } else if (error) {
         toast({
@@ -83,56 +70,9 @@ function Sidebar() {
     });
   };
 
-  const handleSearch = async (keyword) => {
-    setSearch(keyword);
-    searchUsers(keyword).then(({ data, error }) => {
-      if (data) {
-        setSearchResult(data);
-      } else if (error) {
-        toast({
-          title: "Error searching users",
-          description: error.data.message,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-          position: "bottom-left",
-        });
-      }
-    });
-  };
-
-  const handleAccessChat = async (userId) => {
-    console.log("giangdeptrai");
-    accessChat({ userId }).then(({ data, error }) => {
-      if (data) {
-        if (!chats.find((chat) => chat._id === data._id)) {
-          setChats([data, ...chats]);
-          setSelectedChat(data);
-        } else {
-          setSelectedChat(chats.find((chat) => chat._id === data._id));
-        }
-        setSearch("");
-        setIsSearching(false);
-      } else if (error) {
-        toast({
-          title: "Error",
-          description: "Can not access chat",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-          position: "bottom-left",
-        });
-      }
-    });
-  };
-
   useEffect(() => {
     handleFetchChats();
   }, [fetchAgain]);
-
-  useEffect(() => {
-    console.log(isSearching);
-  }, [isSearching]);
 
   return (
     <Box
@@ -156,37 +96,16 @@ function Sidebar() {
         justifyContent="space-between"
         alignItems="center"
       >
-        <InputGroup mr={3}>
-          <InputLeftElement
-            pointerEvents="none"
-            children={<Search2Icon color="gray.300" />}
-          />
-          <Input
-            placeholder="Search by name or email"
-            // mr={2}
-            bg="#F8F8F8"
-            onChange={(e) => handleSearch(e.target.value)}
-            onClick={() => setIsSearching(true)}
-          />
-        </InputGroup>
-        {isSearching ? (
-          <Button
-            fontSize={{ base: "17px", md: "10px", lg: "17px" }}
-            onClick={(e) => {
-              setIsSearching(false);
-              setSearch("");
-              setSearchResult([]);
-            }}
-          >
-            <CloseIcon></CloseIcon>
+        <SearchModal>
+          <Button fontSize={{ base: "17px", md: "10px", lg: "17px" }}>
+            <Search2Icon mr={3} /> Search
           </Button>
-        ) : (
-          <GroupChatModal>
-            <Button fontSize={{ base: "17px", md: "10px", lg: "17px" }}>
-              <AddIcon></AddIcon>
-            </Button>
-          </GroupChatModal>
-        )}
+        </SearchModal>
+        <GroupChatModal>
+          <Button fontSize={{ base: "17px", md: "10px", lg: "17px" }}>
+            <AddIcon mr={3} /> New group chat
+          </Button>
+        </GroupChatModal>
       </Box>
       <Box
         display="flex"
@@ -198,22 +117,7 @@ function Sidebar() {
         borderRadius="lg"
         overflowY="auto"
       >
-        {isSearching ? (
-          <>
-            {searchFetching ? (
-              <ChatLoading> </ChatLoading>
-            ) : (
-              searchResult?.map((user) => (
-                <UserListItem
-                  key={user._id}
-                  user={user}
-                  handleFunction={() => handleAccessChat(user._id)}
-                ></UserListItem>
-              ))
-            )}
-            {accessLoading && <Spinner m="auto" display="flex" />}
-          </>
-        ) : !fetchLoading ? (
+        {!fetchLoading ? (
           <Stack>
             {chats.map((chat) => (
               <Box
@@ -255,7 +159,7 @@ function Sidebar() {
           </Stack>
         ) : (
           <ChatLoading />
-          // <></>
+          // <>Giang</>
         )}
       </Box>
     </Box>

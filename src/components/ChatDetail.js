@@ -109,21 +109,21 @@ function ChatDetail() {
       {selectedChat?.isGroupChat && (
         <>
           <RenameGroupModal p={3}>
-            <Button colorScheme="blue" w="100%">
+            <Button w="100%">
               <EditIcon mr={3} />
               Rename group chat
             </Button>
           </RenameGroupModal>
           <Divider my={3} />
           <AddUserModal p={3}>
-            <Button colorScheme="blue" w="100%">
+            <Button w="100%">
               <AddIcon mr={3} />
               Add user
             </Button>
           </AddUserModal>
         </>
       )}
-      <Box w="100%" display="flex" flexDir="column" overflowY="auto">
+      <Box w="100%" display="flex" flexDir="column" overflowY="auto" my={3}>
         {selectedChat?.users.map((selectedUser) => (
           <ChatDetailUserListItem
             selectedUser={selectedUser}

@@ -10,6 +10,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Spinner,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -19,16 +20,13 @@ import { useSelector } from "react-redux";
 import { AppContext } from "../../context/appContext";
 import {
   useAddToGroupMutation,
-  useCreateGroupChatMutation,
   useLazySearchUsersQuery,
-  useRenameGroupMutation,
 } from "../../services/appApi";
 import UserListItem from "../UserAvater/UserListItem";
 import UserBadgeItem from "../UserAvater/UserBadgeItem";
 
 function AddUserModal({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [groupChatName, setGroupChatName] = useState();
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
@@ -53,7 +51,6 @@ function AddUserModal({ children }) {
     useAddToGroupMutation();
 
   const handleClose = () => {
-    setGroupChatName("");
     setSelectedUsers([]);
     setSearchResult([]);
     setSearch("");
@@ -152,7 +149,7 @@ function AddUserModal({ children }) {
             d="flex"
             justifyContent="center"
           >
-            Create Group Chat
+            Add user
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody d="flex" flexDir="column" alignItems="center">
@@ -174,7 +171,7 @@ function AddUserModal({ children }) {
             </Box>
             {searchFetching ? (
               // <ChatLoading />
-              <div>Loading...</div>
+              <Spinner m="auto" display="flex" />
             ) : (
               searchResult
                 ?.slice(0, 4)
@@ -195,7 +192,7 @@ function AddUserModal({ children }) {
               onClick={handleAddToGroup}
               isLoading={addLoading}
             >
-              Create
+              Add
             </Button>
           </ModalFooter>
         </ModalContent>

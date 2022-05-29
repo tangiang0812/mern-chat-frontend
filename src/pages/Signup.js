@@ -37,7 +37,7 @@ function Signup() {
       event.stopPropagation();
     }
     setValidated(true);
-    signupUser({ name, email, password }).then(({ data }) => {
+    signupUser({ name, email, password }).then(({ data, error }) => {
       if (data) {
         toast({
           title: "Signup Success!",
