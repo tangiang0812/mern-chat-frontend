@@ -49,7 +49,7 @@ function ChatDetail() {
   const [accessChat, { isLoading: accessLoading, error: accessError }] =
     useAccessChatMutation();
 
-  const handleRemove = (selectedUser) => {
+  const handleRemove = async (selectedUser) => {
     const payload = {
       chatId: selectedChat._id,
       userId: selectedUser._id,
@@ -57,7 +57,7 @@ function ChatDetail() {
     removeFromGroup(payload).then(({ data, error }) => {
       if (data) {
         setFetchAgain(!fetchAgain);
-        selectedUser._id === user._id && setSelectedChat();
+        // selectedUser._id === user._id && setSelectedChat();
       } else if (error) {
         toast({
           title: "Error Occured!",
@@ -136,7 +136,12 @@ function ChatDetail() {
       {selectedChat?.isGroupChat && (
         <Box mt="auto" w="100%">
           <Divider my={3} />
-          <Button onClick={() => handleRemove(user)} colorScheme="red" w="100%">
+          <Button
+            onClick={() => handleRemove(user)}
+            colorScheme="red"
+            w="100%"
+            isLoading={removeLoading}
+          >
             <ArrowLeftIcon mr={3} />
             Leave group
           </Button>

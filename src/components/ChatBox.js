@@ -10,21 +10,92 @@ import {
   FormControl,
   IconButton,
   Input,
+  Spinner,
   Text,
+  useToast,
 } from "@chakra-ui/react";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { getSender } from "../config/ChatLogics";
 import { AppContext } from "../context/appContext";
+import {
+  useLazyFetchMessagesQuery,
+  useSendMessageMutation,
+} from "../services/appApi";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupModal";
 
 function ChatBox() {
   const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState();
+
+  const toast = useToast();
 
   const { selectedChat, setSelectedChat, showDetail, setShowDetail } =
     useContext(AppContext);
 
   const user = useSelector((state) => state.user);
+
+  const [sendMessage, { isLoading: sendLoading, error: sendErorr }] =
+    useSendMessageMutation();
+
+  const [fetchMessages, { isFetching: fetchFetching, error: fetchError }] =
+    useLazyFetchMessagesQuery();
+
+  const typingHandler = (msg) => {
+    setNewMessage(msg);
+  };
+
+  const handleSendMessage = async (event) => {
+    if (event.key === "Enter" && newMessage) {
+      const payload = {
+        content: newMessage,
+        chatId: selectedChat._id,
+      };
+      event.target.value = "";
+      console.log(messages);
+      setNewMessage("");
+      sendMessage(payload).then(({ data, error }) => {
+        if (data) {
+          setMessages([...messages, data]);
+        } else if (error) {
+          toast({
+            title: "Error Occured!",
+            description: "Failed to send the Message",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom",
+          });
+        }
+      });
+    }
+  };
+
+  const handleFetchMessages = async () => {
+    if (!selectedChat) return;
+    const payload = {
+      chatId: selectedChat._id,
+    };
+    fetchMessages(payload).then(({ data, error }) => {
+      if (data) {
+        setMessages(data);
+        // socket.emit("join chat", selectedChat._id);
+      } else if (error) {
+        toast({
+          title: "Error Occured!",
+          description: "Failed to Load the Messages",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      }
+    });
+  };
+
+  useEffect(() => {
+    handleFetchMessages();
+  }, [selectedChat]);
 
   return (
     <Box
@@ -89,8 +160,13 @@ function ChatBox() {
             borderRadius="lg"
             overflowY="hidden"
           >
+            {!fetchFetching ? (
+              <Spinner m="auto" alignSelf="center"></Spinner>
+            ) : (
+              <></>
+            )}
             <FormControl
-              // onKeyDown={sendMessage}
+              onKeyDown={handleSendMessage}
               id="first-name"
               isRequired
               mt={3}
@@ -113,7 +189,7 @@ function ChatBox() {
                 bg="#E0E0E0"
                 placeholder="Enter a message.."
                 // value={newMessage}
-                // onChange={typingHandler}
+                onChange={(e) => typingHandler(e.target.value)}
               />
             </FormControl>
           </Box>

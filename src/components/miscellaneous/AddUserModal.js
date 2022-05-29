@@ -58,7 +58,7 @@ function AddUserModal({ children }) {
   };
 
   const handleGroup = (userToAdd) => {
-    if (selectedUsers.includes(userToAdd)) {
+    if (selectedUsers.find((user) => user._id === userToAdd._id)) {
       toast({
         title: "User already added",
         status: "warning",

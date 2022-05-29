@@ -97,6 +97,21 @@ const appApi = createApi({
         body: payload,
       }),
     }),
+
+    fetchMessages: builder.query({
+      query: (payload) => ({
+        url: `/api/message/${payload.chatId}`,
+        method: "GET",
+      }),
+    }),
+
+    sendMessage: builder.mutation({
+      query: (payload) => ({
+        url: "/api/message",
+        method: "POST",
+        body: payload,
+      }),
+    }),
   }),
 });
 
@@ -112,6 +127,8 @@ export const {
   useRemoveFromGroupMutation,
   useRenameGroupMutation,
   useAddToGroupMutation,
+  useLazyFetchMessagesQuery,
+  useSendMessageMutation,
 } = appApi;
 
 export default appApi;

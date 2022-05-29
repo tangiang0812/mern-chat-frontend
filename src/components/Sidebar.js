@@ -50,13 +50,22 @@ function Sidebar() {
         console.log(data);
         setChats(data);
         if (selectedChat) {
-          for (let chat of data) {
+          let found = false;
+          for (var chat of data) {
             if (chat._id === selectedChat._id) {
-              setSelectedChat(chat);
+              found = true;
+              break;
             }
           }
-          // setSelectedChat(chats.find((chat) => chat._id === selectedChat._id)); :) no idea why this line doesn't get the job done
+          console.log(chat);
+          found ? setSelectedChat(chat) : setSelectedChat();
         }
+        // console.log(
+        //   chats.find((chat) => selectedChat && chat._id === selectedChat._id)
+        // );
+        // setSelectedChat(
+        //   chats.find((chat) => selectedChat && chat._id === selectedChat._id) // this one will not work bc return value of find is selectedChat not chat
+        // );
       } else if (error) {
         toast({
           title: "Error fetching chats",
@@ -97,12 +106,12 @@ function Sidebar() {
         alignItems="center"
       >
         <SearchModal>
-          <Button fontSize={{ base: "17px", md: "10px", lg: "17px" }}>
+          <Button>
             <Search2Icon mr={3} /> Search
           </Button>
         </SearchModal>
         <GroupChatModal>
-          <Button fontSize={{ base: "17px", md: "10px", lg: "17px" }}>
+          <Button>
             <AddIcon mr={3} /> New group chat
           </Button>
         </GroupChatModal>
