@@ -37,12 +37,13 @@ function Navigation() {
       borderWidth="5px"
     >
       <Link to="/">
-        <Text
+        {/* <Text
           fontSize="2xl"
           // fontFamily="Work sans"
         >
           IMess
-        </Text>
+        </Text> */}
+        <img src={download} width="32"></img>
       </Link>
       {!user && (
         <div>
@@ -79,7 +80,7 @@ function Navigation() {
               <ProfileModal user={user}>
                 <MenuItem>My Profile</MenuItem>
               </ProfileModal>
-              <MenuDivider></MenuDivider>
+              {/* <MenuDivider></MenuDivider> */}
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </MenuList>
           </Menu>

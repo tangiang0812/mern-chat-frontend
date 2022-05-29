@@ -16,18 +16,11 @@ import { useSelector } from "react-redux";
 // import ChatLoading from "./ChatLoading";
 import { getSender } from "../config/ChatLogics";
 import { AppContext } from "../context/appContext";
-import {
-  useAccessChatMutation,
-  useLazyFetchChatsQuery,
-  useLazySearchUsersQuery,
-} from "../services/appApi";
+import { useLazyFetchChatsQuery } from "../services/appApi";
 
 import GroupChatModal from "./miscellaneous/GroupChatModal";
-import UserListItem from "./UserAvater/UserListItem";
 import ChatLoading from "./UserAvater/ChatLoading";
 import SearchModal from "./miscellaneous/SearchModal";
-
-// import GroupChatModal from "./miscellaneous/GroupChatModal";
 
 function Sidebar() {
   const [loggedUser, setLoggedUser] = useState();
@@ -134,7 +127,7 @@ function Sidebar() {
                   setSelectedChat(chat);
                 }}
                 cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
+                bg={selectedChat === chat ? "#638bfa" : "#E8E8E8"}
                 color={selectedChat === chat ? "white" : "black"}
                 px={3}
                 py={2}
@@ -145,24 +138,26 @@ function Sidebar() {
               >
                 <Avatar
                   mr={2}
-                  size="sm"
+                  size="md"
                   cursor="pointer"
                   name={chat.chatName}
                   src={chat.users[0].picture}
                 />
-                <Text>
-                  {!chat.isGroupChat
-                    ? getSender(user, chat.users).name
-                    : chat.chatName}
-                </Text>
-                {chat.latestMessage && (
-                  <Text fontSize="xs">
-                    <b>{chat.latestMessage.sender.name} : </b>
-                    {chat.latestMessage.content.length > 50
-                      ? chat.latestMessage.content.substring(0, 51) + "..."
-                      : chat.latestMessage.content}
+                <Box>
+                  <Text>
+                    {!chat.isGroupChat
+                      ? getSender(user, chat.users).name
+                      : chat.chatName}
                   </Text>
-                )}
+                  {/* {chat.latestMessage && (
+                    <Text fontSize="xs">
+                      <b>{chat.latestMessage.sender.name} : </b>
+                      {chat.latestMessage.content.length > 50
+                        ? chat.latestMessage.content.substring(0, 51) + "..."
+                        : chat.latestMessage.content}
+                    </Text>
+                  )} */}
+                </Box>
               </Box>
             ))}
           </Stack>

@@ -146,21 +146,21 @@ function AddUserModal({ children }) {
           <ModalHeader
             fontSize="35px"
             // fontFamily="Work sans"
-            d="flex"
+            display="flex"
             justifyContent="center"
           >
             Add user
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody d="flex" flexDir="column" alignItems="center">
+          <ModalBody display="flex" flexDir="column" alignItems="center">
             <FormControl>
               <Input
                 placeholder="Add Users"
-                mb={1}
+                mb={3}
                 onChange={(e) => handleSearch(e.target.value)}
               />
             </FormControl>
-            <Box w="100%" d="flex" flexWrap="wrap">
+            <Box w="100%" display="flex" flexWrap="wrap" mb={3}>
               {selectedUsers.map((u) => (
                 <UserBadgeItem
                   key={u._id}

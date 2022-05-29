@@ -8,7 +8,7 @@ function UserListItem({ user, handleFunction }) {
       cursor="pointer"
       bg="#E8E8E8"
       _hover={{
-        background: "#38B2AC",
+        background: "#638bfa",
         color: "white",
       }}
       w="100%"
@@ -25,7 +25,7 @@ function UserListItem({ user, handleFunction }) {
         size="sm"
         cursor="pointer"
         name={user.name}
-        src={user.pic}
+        src={user.picture}
       />
       <Box display="flex" flexDir="column" alignItems="flex-start">
         <Text>{user.name}</Text>

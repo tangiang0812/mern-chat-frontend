@@ -1,14 +1,9 @@
+import { InfoOutlineIcon } from "@chakra-ui/icons";
 import {
-  ArrowBackIcon,
-  InfoIcon,
-  InfoOutlineIcon,
-  WarningIcon,
-} from "@chakra-ui/icons";
-import {
+  Avatar,
   Box,
   Button,
   FormControl,
-  IconButton,
   Input,
   Spinner,
   Text,
@@ -16,13 +11,13 @@ import {
 } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { getSender } from "../config/ChatLogics";
+import { getSender, showAvatar, isSameUser } from "../config/ChatLogics";
 import { AppContext } from "../context/appContext";
 import {
   useLazyFetchMessagesQuery,
   useSendMessageMutation,
 } from "../services/appApi";
-import UpdateGroupChatModal from "./miscellaneous/UpdateGroupModal";
+import ScrollableFeed from "./miscellaneous/ScrollableFeed";
 
 function ChatBox() {
   const [messages, setMessages] = useState([]);
@@ -30,8 +25,7 @@ function ChatBox() {
 
   const toast = useToast();
 
-  const { selectedChat, setSelectedChat, showDetail, setShowDetail } =
-    useContext(AppContext);
+  const { selectedChat, showDetail, setShowDetail } = useContext(AppContext);
 
   const user = useSelector((state) => state.user);
 
@@ -124,12 +118,7 @@ function ChatBox() {
           >
             {messages &&
               (!selectedChat.isGroupChat ? (
-                <>
-                  {getSender(user, selectedChat.users).name}
-                  {/* <ProfileModal
-                    user={getSenderFull(user, selectedChat.users)}
-                  /> */}
-                </>
+                <>{getSender(user, selectedChat.users).name}</>
               ) : (
                 <>
                   {selectedChat.chatName.toUpperCase()}
@@ -152,47 +141,105 @@ function ChatBox() {
           <Box
             display="flex"
             flexDir="column"
-            justifyContent="flex-end"
             p={3}
             bg="#E8E8E8"
             w="100%"
             h="100%"
             borderRadius="lg"
-            overflowY="hidden"
+            overflowY="scroll"
           >
-            {!fetchFetching ? (
+            {fetchFetching ? (
               <Spinner m="auto" alignSelf="center"></Spinner>
             ) : (
+              // <ScrollToBottom>
+              //   {messages &&
+              //     messages.map((m, i) => (
+              //       <div style={{ display: "flex" }} key={m._id}>
+              //         {m.sender._id === user._id ? (
+              //           <>
+              //             <span
+              //               style={{
+              //                 marginLeft: "auto",
+              //                 backgroundColor: "#B9F5D0",
+              //                 marginTop: isSameUser(messages, m, i) ? 3 : 10,
+              //                 borderRadius: "20px",
+              //                 padding: "5px 15px",
+              //                 maxWidth: "75%",
+              //               }}
+              //             >
+              //               {m.content}
+              //             </span>
+              //             {showAvatar(messages, m, i) ? (
+              //               <Avatar
+              //                 mt="7px"
+              //                 ml="4px"
+              //                 mr="0px"
+              //                 size="sm"
+              //                 name={m.sender.name}
+              //                 src={m.sender.picture}
+              //               />
+              //             ) : (
+              //               <Box w="36px" mr="0px" />
+              //             )}
+              //           </>
+              //         ) : (
+              //           <>
+              //             {showAvatar(messages, m, i) ? (
+              //               <Avatar
+              //                 mt="7px"
+              //                 mr="4px"
+              //                 size="sm"
+              //                 name={m.sender.name}
+              //                 src={m.sender.picture}
+              //               />
+              //             ) : (
+              //               <Box w="36px" />
+              //             )}
+              //             <span
+              //               style={{
+              //                 backgroundColor: "#B9F5D0",
+              //                 marginTop: isSameUser(messages, m, i) ? 3 : 10,
+              //                 borderRadius: "20px",
+              //                 padding: "5px 15px",
+              //                 maxWidth: "75%",
+              //               }}
+              //             >
+              //               {m.content}
+              //             </span>
+              //           </>
+              //         )}
+              //       </div>
+              //     ))}
+              // </ScrollToBottom>
+              <ScrollableFeed messages={messages} />
+            )}
+          </Box>
+          <FormControl
+            onKeyDown={handleSendMessage}
+            id="first-name"
+            isRequired
+            mt={3}
+          >
+            {false ? (
+              <></>
+            ) : (
+              // <div>
+              //   <Lottie
+              //     options={defaultOptions}
+              //     // height={50}
+              //     width={70}
+              //     style={{ marginBottom: 15, marginLeft: 0 }}
+              //   />
+              // </div>
               <></>
             )}
-            <FormControl
-              onKeyDown={handleSendMessage}
-              id="first-name"
-              isRequired
-              mt={3}
-            >
-              {false ? (
-                <></>
-              ) : (
-                // <div>
-                //   <Lottie
-                //     options={defaultOptions}
-                //     // height={50}
-                //     width={70}
-                //     style={{ marginBottom: 15, marginLeft: 0 }}
-                //   />
-                // </div>
-                <></>
-              )}
-              <Input
-                variant="filled"
-                bg="#E0E0E0"
-                placeholder="Enter a message.."
-                // value={newMessage}
-                onChange={(e) => typingHandler(e.target.value)}
-              />
-            </FormControl>
-          </Box>
+            <Input
+              variant="filled"
+              placeholder="Enter a message.."
+              // value={newMessage}
+              onChange={(e) => typingHandler(e.target.value)}
+            />
+          </FormControl>
         </>
       ) : (
         <Box
