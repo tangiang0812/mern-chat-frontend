@@ -78,13 +78,11 @@ function Sidebar() {
 
   return (
     <Box
-      // display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       display="flex"
       flexDir="column"
       alignItems="center"
       p={3}
       bg="white"
-      // w={{ base: "100%", md: "31%" }}
       w="20%"
       borderRadius="lg"
       borderWidth="1px"

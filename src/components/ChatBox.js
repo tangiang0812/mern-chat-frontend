@@ -11,17 +11,22 @@ import {
 } from "@chakra-ui/react";
 import React, { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { getSender, showAvatar, isSameUser } from "../config/ChatLogics";
+import { getSender } from "../config/ChatLogics";
 import { AppContext } from "../context/appContext";
 import {
   useLazyFetchMessagesQuery,
   useSendMessageMutation,
 } from "../services/appApi";
 import ScrollableFeed from "./miscellaneous/ScrollableFeed";
+import io from "socket.io-client";
+
+const ENDPOINT = "http://localhost:4000";
+let socket, previousSelectedChat;
 
 function ChatBox() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState();
+  const [socketConnected, setSocketConnected] = useState(false);
 
   const toast = useToast();
 
@@ -40,29 +45,31 @@ function ChatBox() {
   };
 
   const handleSendMessage = async (event) => {
-    if (event.key === "Enter" && newMessage) {
-      const payload = {
-        content: newMessage,
-        chatId: selectedChat._id,
-      };
-      event.target.value = "";
-      console.log(messages);
-      setNewMessage("");
-      sendMessage(payload).then(({ data, error }) => {
-        if (data) {
-          setMessages([...messages, data]);
-        } else if (error) {
-          toast({
-            title: "Error Occured!",
-            description: "Failed to send the Message",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-            position: "bottom",
-          });
-        }
-      });
-    }
+    if ((event?.key && event.key !== "Enter") || !newMessage) return;
+    // if ((event.key && event.key === "Enter") || newMessage) {
+    const payload = {
+      content: newMessage,
+      chatId: selectedChat._id,
+    };
+    document.getElementById("chat-field").value = "";
+    console.log(messages);
+    setNewMessage("");
+    sendMessage(payload).then(({ data, error }) => {
+      if (data) {
+        socket.emit("new-message", data);
+        setMessages([...messages, data]);
+      } else if (error) {
+        toast({
+          title: "Error Occured!",
+          description: "Failed to send the Message",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      }
+    });
+    // }
   };
 
   const handleFetchMessages = async () => {
@@ -73,7 +80,7 @@ function ChatBox() {
     fetchMessages(payload).then(({ data, error }) => {
       if (data) {
         setMessages(data);
-        // socket.emit("join chat", selectedChat._id);
+        socket.emit("join-chat", selectedChat._id);
       } else if (error) {
         toast({
           title: "Error Occured!",
@@ -88,8 +95,33 @@ function ChatBox() {
   };
 
   useEffect(() => {
+    socket = io(ENDPOINT, {
+      auth: {
+        token: user.token,
+      },
+    });
+    socket.emit("setup", user);
+    console.log(user);
+    // socket.on("connected", () => setSocketConnected(true));
+  }, []);
+
+  useEffect(() => {
     handleFetchMessages();
+    previousSelectedChat = selectedChat;
   }, [selectedChat]);
+
+  useEffect(() => {
+    socket.on("message-received", (receivedMessage) => {
+      if (
+        !previousSelectedChat ||
+        previousSelectedChat._id !== receivedMessage.chat._id
+      ) {
+      } else {
+        console.log(receivedMessage);
+        setMessages([...messages, receivedMessage]);
+      }
+    });
+  });
 
   return (
     <Box
@@ -151,95 +183,54 @@ function ChatBox() {
             {fetchFetching ? (
               <Spinner m="auto" alignSelf="center"></Spinner>
             ) : (
-              // <ScrollToBottom>
-              //   {messages &&
-              //     messages.map((m, i) => (
-              //       <div style={{ display: "flex" }} key={m._id}>
-              //         {m.sender._id === user._id ? (
-              //           <>
-              //             <span
-              //               style={{
-              //                 marginLeft: "auto",
-              //                 backgroundColor: "#B9F5D0",
-              //                 marginTop: isSameUser(messages, m, i) ? 3 : 10,
-              //                 borderRadius: "20px",
-              //                 padding: "5px 15px",
-              //                 maxWidth: "75%",
-              //               }}
-              //             >
-              //               {m.content}
-              //             </span>
-              //             {showAvatar(messages, m, i) ? (
-              //               <Avatar
-              //                 mt="7px"
-              //                 ml="4px"
-              //                 mr="0px"
-              //                 size="sm"
-              //                 name={m.sender.name}
-              //                 src={m.sender.picture}
-              //               />
-              //             ) : (
-              //               <Box w="36px" mr="0px" />
-              //             )}
-              //           </>
-              //         ) : (
-              //           <>
-              //             {showAvatar(messages, m, i) ? (
-              //               <Avatar
-              //                 mt="7px"
-              //                 mr="4px"
-              //                 size="sm"
-              //                 name={m.sender.name}
-              //                 src={m.sender.picture}
-              //               />
-              //             ) : (
-              //               <Box w="36px" />
-              //             )}
-              //             <span
-              //               style={{
-              //                 backgroundColor: "#B9F5D0",
-              //                 marginTop: isSameUser(messages, m, i) ? 3 : 10,
-              //                 borderRadius: "20px",
-              //                 padding: "5px 15px",
-              //                 maxWidth: "75%",
-              //               }}
-              //             >
-              //               {m.content}
-              //             </span>
-              //           </>
-              //         )}
-              //       </div>
-              //     ))}
-              // </ScrollToBottom>
               <ScrollableFeed messages={messages} />
             )}
           </Box>
-          <FormControl
-            onKeyDown={handleSendMessage}
-            id="first-name"
-            isRequired
-            mt={3}
+          <Box
+            width="100%"
+            display="flex"
+            pb={2}
+            borderRadius="lg"
+            justifyContent="space-between"
+            alignItems="center"
           >
-            {false ? (
-              <></>
-            ) : (
-              // <div>
-              //   <Lottie
-              //     options={defaultOptions}
-              //     // height={50}
-              //     width={70}
-              //     style={{ marginBottom: 15, marginLeft: 0 }}
-              //   />
-              // </div>
-              <></>
-            )}
-            <Input
-              variant="filled"
-              placeholder="Enter a message.."
-              // value={newMessage}
-              onChange={(e) => typingHandler(e.target.value)}
-            />
-          </FormControl>
+            <FormControl
+              onKeyDown={handleSendMessage}
+              id="first-name"
+              isRequired
+              mt={3}
+            >
+              {false ? (
+                <></>
+              ) : (
+                // <div>
+                //   <Lottie
+                //     options={defaultOptions}
+                //     // height={50}
+                //     width={70}
+                //     style={{ marginBottom: 15, marginLeft: 0 }}
+                //   />
+                // </div>
+                <></>
+              )}
+              <Input
+                variant="filled"
+                placeholder="Enter a message.."
+                id="chat-field"
+                onChange={(e) => typingHandler(e.target.value)}
+                disabled={sendLoading}
+              />
+            </FormControl>
+            <Button
+              colorScheme="blue"
+              color="white"
+              onClick={handleSendMessage}
+              mt={3}
+              ml={3}
+            >
+              <i class="fa-solid fa-paper-plane"></i>
+            </Button>
+          </Box>
         </>
       ) : (
         <Box

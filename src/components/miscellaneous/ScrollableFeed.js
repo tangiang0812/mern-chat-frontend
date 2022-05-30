@@ -7,7 +7,7 @@ const ScrollableFeed = ({ messages }) => {
   const messagesEndRef = useRef(null);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
-      behavior: "smooth",
+      behavior: "auto",
       block: "end",
       inline: "nearest",
     });
@@ -26,11 +26,12 @@ const ScrollableFeed = ({ messages }) => {
                 <span
                   style={{
                     marginLeft: "auto",
-                    backgroundColor: "#f1f3f4",
+                    backgroundColor: "#638bfa",
                     marginBottom: isSameUser(messages, m, i) ? 3 : 10,
                     borderRadius: "20px",
                     padding: "5px 15px",
                     maxWidth: "75%",
+                    color: "white",
                   }}
                 >
                   {m.content}
@@ -62,8 +63,8 @@ const ScrollableFeed = ({ messages }) => {
                 )}
                 <span
                   style={{
-                    backgroundColor: "#638bfa",
-                    color: "white",
+                    backgroundColor: "#f1f3f4",
+                    color: "black",
                     marginBottom: isSameUser(messages, m, i) ? 3 : 10,
                     borderRadius: "20px",
                     padding: "5px 15px",

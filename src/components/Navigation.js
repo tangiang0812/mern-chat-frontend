@@ -10,20 +10,24 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
-import React from "react";
+import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 import download from "../assets/download.png";
 import { useLogoutUserMutation } from "../services/appApi";
 import { Link } from "react-router-dom";
 import ProfileModal from "./miscellaneous/ProfileModal";
+import { AppContext } from "../context/appContext";
 
 function Navigation() {
   const user = useSelector((state) => state.user);
+  const { setSelectedChat, setChats } = useContext(AppContext);
   const [logoutUser, { isLoading, error }] = useLogoutUserMutation();
 
   const handleLogout = async (event) => {
     event.preventDefault();
     await logoutUser();
+    setSelectedChat();
+    setChats();
     window.location.replace("/"); // important line :D
   };
   return (

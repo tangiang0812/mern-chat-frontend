@@ -21,6 +21,9 @@ function Chat() {
         {user && <Sidebar />}
         {user && <ChatBox />}
         {user && <ChatDetail />}
+        {/* {<Sidebar />}
+        {<ChatBox />}
+        {<ChatDetail />} */}
       </Box>
       <Box
         h="92.5vh"
