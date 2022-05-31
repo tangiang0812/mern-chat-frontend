@@ -58,9 +58,19 @@ function AddUserModal({ children }) {
   };
 
   const handleGroup = (userToAdd) => {
-    if (selectedUsers.find((user) => user._id === userToAdd._id)) {
+    if (selectedUsers.find((u) => u._id === userToAdd._id)) {
       toast({
         title: "User already added",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
+    if (selectedChat.users.find((u) => u._id === userToAdd._id)) {
+      toast({
+        title: "User is a member aldready",
         status: "warning",
         duration: 5000,
         isClosable: true,

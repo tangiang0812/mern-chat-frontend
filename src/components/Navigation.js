@@ -70,6 +70,7 @@ function Navigation() {
           </Menu>
           <Menu>
             <MenuButton
+              m={1}
               as={Button}
               rightIcon={<ChevronDownIcon></ChevronDownIcon>}
             >

@@ -12,7 +12,7 @@ function Chat() {
   return (
     <div style={{ width: "100%" }}>
       <Box
-        display={{ base: "none", md: "flex" }}
+        display={{ base: "none", lg: "flex" }}
         justifyContent="space-between"
         w="100%"
         h="92.5vh"
@@ -27,7 +27,7 @@ function Chat() {
       </Box>
       <Box
         h="92.5vh"
-        display={{ base: "flex", md: "none" }}
+        display={{ base: "flex", xl: "none" }}
         alignItems="center"
         justifyContent="center"
       >

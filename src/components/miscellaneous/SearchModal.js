@@ -129,7 +129,7 @@ function SearchModal({ children }) {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody display="flex" flexDir="column" alignItems="center">
-            <FormControl>
+            <FormControl mb={3}>
               <Input
                 placeholder="Add Users"
                 mb={1}

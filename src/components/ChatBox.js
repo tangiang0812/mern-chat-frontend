@@ -9,7 +9,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { getSender } from "../config/ChatLogics";
 import { AppContext } from "../context/appContext";
@@ -30,7 +30,10 @@ function ChatBox() {
 
   const toast = useToast();
 
-  const { selectedChat, showDetail, setShowDetail } = useContext(AppContext);
+  const { selectedChat, showDetail, setShowDetail, setChats, chats } =
+    useContext(AppContext);
+
+  const inputField = useRef(null);
 
   const user = useSelector((state) => state.user);
 
@@ -47,17 +50,28 @@ function ChatBox() {
   const handleSendMessage = async (event) => {
     if ((event?.key && event.key !== "Enter") || !newMessage) return;
     // if ((event.key && event.key === "Enter") || newMessage) {
+
+    inputField.current.value = "";
+    setNewMessage("");
+
     const payload = {
       content: newMessage,
       chatId: selectedChat._id,
     };
-    document.getElementById("chat-field").value = "";
-    console.log(messages);
-    setNewMessage("");
+
     sendMessage(payload).then(({ data, error }) => {
       if (data) {
         socket.emit("new-message", data);
         setMessages([...messages, data]);
+
+        if (selectedChat !== chats[0]) {
+          setChats([
+            selectedChat,
+            ...chats.filter((chat) => chat !== selectedChat),
+          ]);
+        }
+
+        inputField.current.focus();
       } else if (error) {
         toast({
           title: "Error Occured!",
@@ -139,29 +153,34 @@ function ChatBox() {
     >
       {selectedChat ? (
         <>
-          <Text
-            fontSize={{ base: "28px", md: "30px" }}
-            pb={3}
-            px={2}
+          <Box
             w="100%"
             display="flex"
             justifyContent={{ base: "space-between" }}
             alignItems="center"
           >
-            {messages &&
-              (!selectedChat.isGroupChat ? (
-                <>{getSender(user, selectedChat.users).name}</>
-              ) : (
-                <>
-                  {selectedChat.chatName.toUpperCase()}
-                  {/* <Button
+            <Text
+              fontSize={{ base: "28px", md: "30px" }}
+              mb={3}
+              px={2}
+              w="100%"
+            >
+              {messages &&
+                (!selectedChat.isGroupChat ? (
+                  <>{getSender(user, selectedChat.users).name}</>
+                ) : (
+                  <>
+                    {selectedChat.chatName.toUpperCase()}
+                    {/* <Button
                   fetchMessages={fetchMessages}
                   fetchAgain={fetchAgain}
                   setFetchAgain={setFetchAgain}
                   /> */}
-                </>
-              ))}
+                  </>
+                ))}
+            </Text>
             <Button
+              mb={3}
               fontSize={{ base: "17px", md: "10px", lg: "17px" }}
               onClick={(e) => {
                 setShowDetail(!showDetail);
@@ -169,7 +188,7 @@ function ChatBox() {
             >
               <InfoOutlineIcon></InfoOutlineIcon>
             </Button>
-          </Text>
+          </Box>
           <Box
             display="flex"
             flexDir="column"
@@ -189,7 +208,6 @@ function ChatBox() {
           <Box
             width="100%"
             display="flex"
-            pb={2}
             borderRadius="lg"
             justifyContent="space-between"
             alignItems="center"
@@ -216,7 +234,7 @@ function ChatBox() {
               <Input
                 variant="filled"
                 placeholder="Enter a message.."
-                id="chat-field"
+                ref={inputField}
                 onChange={(e) => typingHandler(e.target.value)}
                 disabled={sendLoading}
               />
@@ -225,10 +243,11 @@ function ChatBox() {
               colorScheme="blue"
               color="white"
               onClick={handleSendMessage}
+              isLoading={sendLoading}
               mt={3}
               ml={3}
             >
-              <i class="fa-solid fa-paper-plane"></i>
+              <i className="fa-solid fa-paper-plane"></i>
             </Button>
           </Box>
         </>

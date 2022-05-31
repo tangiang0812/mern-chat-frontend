@@ -1,18 +1,6 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Stack,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
+import { Box, Button, Divider, useToast } from "@chakra-ui/react";
 import React, { useContext } from "react";
 import { AppContext } from "../context/appContext";
-import UserListItem from "./UserAvater/UserListItem";
 import ChatDetailUserListItem from "./UserAvater/ChatDetailUserListItem";
 import { useSelector } from "react-redux";
 import {
@@ -21,12 +9,7 @@ import {
 } from "../services/appApi";
 import AddUserModal from "./miscellaneous/AddUserModal";
 import RenameGroupModal from "./miscellaneous/RenameGroupModal";
-import {
-  AddIcon,
-  ArrowLeftIcon,
-  EditIcon,
-  SmallAddIcon,
-} from "@chakra-ui/icons";
+import { AddIcon, ArrowLeftIcon, EditIcon } from "@chakra-ui/icons";
 
 function ChatDetail() {
   const toast = useToast();
@@ -72,7 +55,6 @@ function ChatDetail() {
   };
 
   const handleAccessChat = async (userId) => {
-    console.log("giangdeptrai");
     accessChat({ userId }).then(({ data, error }) => {
       if (data) {
         if (!chats.find((chat) => chat._id === data._id)) {

@@ -11,7 +11,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 // import ChatLoading from "./ChatLoading";
 import { getSender } from "../config/ChatLogics";
@@ -23,8 +23,6 @@ import ChatLoading from "./UserAvater/ChatLoading";
 import SearchModal from "./miscellaneous/SearchModal";
 
 function Sidebar() {
-  const [loggedUser, setLoggedUser] = useState();
-
   const { selectedChat, setSelectedChat, chats, setChats, fetchAgain } =
     useContext(AppContext);
 
@@ -36,6 +34,16 @@ function Sidebar() {
     fetchChats,
     { isFetching: fetchFetching, isLoading: fetchLoading, error: fetchError },
   ] = useLazyFetchChatsQuery();
+
+  const chatRef = useRef(null);
+
+  const scrollIntoView = () => {
+    chatRef.current?.scrollIntoView({
+      behavior: "auto",
+      block: "end",
+      inline: "nearest",
+    });
+  };
 
   const handleFetchChats = () => {
     fetchChats().then(({ data, error }) => {
@@ -76,6 +84,10 @@ function Sidebar() {
     handleFetchChats();
   }, [fetchAgain]);
 
+  useEffect(() => {
+    scrollIntoView();
+  }, [selectedChat, chats]);
+
   return (
     <Box
       display="flex"
@@ -88,25 +100,16 @@ function Sidebar() {
       borderWidth="1px"
       overflowY="hidden"
     >
-      <Box
-        width="100%"
-        display="flex"
-        pb={2}
-        borderRadius="lg"
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <SearchModal>
-          <Button>
-            <Search2Icon mr={3} /> Search
-          </Button>
-        </SearchModal>
-        <GroupChatModal>
-          <Button>
-            <AddIcon mr={3} /> New group chat
-          </Button>
-        </GroupChatModal>
-      </Box>
+      <SearchModal p={3}>
+        <Button w="100%" mb={3}>
+          <Search2Icon mr={3} /> Search
+        </Button>
+      </SearchModal>
+      <GroupChatModal p={3}>
+        <Button w="100%" mb={3}>
+          <AddIcon mr={3} /> New group chat
+        </Button>
+      </GroupChatModal>
       <Box
         display="flex"
         flexDir="column"
@@ -127,6 +130,7 @@ function Sidebar() {
                 cursor="pointer"
                 bg={selectedChat === chat ? "#638bfa" : "#E8E8E8"}
                 color={selectedChat === chat ? "white" : "black"}
+                ref={selectedChat === chat ? chatRef : null}
                 px={3}
                 py={2}
                 borderRadius="lg"

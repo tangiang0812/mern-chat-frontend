@@ -122,7 +122,6 @@ function GroupChatModal({ children }) {
           setSelectedChat(chats.find((chat) => chat._id === data._id));
         }
         handleClose();
-        handleClose();
         toast({
           title: "New Group Chat Created!",
           status: "success",
@@ -145,7 +144,9 @@ function GroupChatModal({ children }) {
 
   return (
     <>
-      <span onClick={onOpen}>{children}</span>
+      <span onClick={onOpen} style={{ width: "100%" }}>
+        {children}
+      </span>
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={handleClose}>
         <ModalOverlay />
         <ModalContent>

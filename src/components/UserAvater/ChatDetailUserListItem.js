@@ -33,6 +33,7 @@ function ChatDetailUserListItem({
       px={3}
       py={2}
       mb={2}
+      h="60px"
       borderRadius="lg"
     >
       <Avatar
