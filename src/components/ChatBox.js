@@ -62,6 +62,7 @@ function ChatBox() {
     sendMessage(payload).then(({ data, error }) => {
       if (data) {
         socket.emit("new-message", data);
+        console.log(data);
         setMessages([...messages, data]);
 
         if (selectedChat !== chats[0]) {
@@ -115,7 +116,7 @@ function ChatBox() {
       },
     });
     socket.emit("setup", user);
-    console.log(user);
+    // console.log(user);
     // socket.on("connected", () => setSocketConnected(true));
   }, []);
 
@@ -128,7 +129,7 @@ function ChatBox() {
     socket.on("message-received", (receivedMessage) => {
       if (
         !previousSelectedChat ||
-        previousSelectedChat._id !== receivedMessage.chat._id
+        previousSelectedChat._id !== receivedMessage.chat
       ) {
       } else {
         console.log(receivedMessage);

@@ -48,7 +48,6 @@ function Sidebar() {
   const handleFetchChats = () => {
     fetchChats().then(({ data, error }) => {
       if (data) {
-        console.log(data);
         setChats(data);
         if (selectedChat) {
           let found = false;
@@ -58,7 +57,6 @@ function Sidebar() {
               break;
             }
           }
-          console.log(chat);
           found ? setSelectedChat(chat) : setSelectedChat();
         }
         // console.log(
