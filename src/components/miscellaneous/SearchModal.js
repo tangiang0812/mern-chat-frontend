@@ -1,6 +1,4 @@
 import {
-  Box,
-  Button,
   FormControl,
   Input,
   Modal,
@@ -14,19 +12,13 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-// import axios from "axios";
 import React, { useContext, useState } from "react";
-import { useSelector } from "react-redux";
 import { AppContext } from "../../context/appContext";
 import {
   useAccessChatMutation,
-  useAddToGroupMutation,
-  useCreateGroupChatMutation,
   useLazySearchUsersQuery,
-  useRenameGroupMutation,
 } from "../../services/appApi";
 import UserListItem from "../UserAvater/UserListItem";
-import UserBadgeItem from "../UserAvater/UserBadgeItem";
 
 function SearchModal({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -36,14 +28,7 @@ function SearchModal({ children }) {
 
   const toast = useToast();
 
-  const {
-    chats,
-    setChats,
-    setSelectedChat,
-    selectedChat,
-    setFetchAgain,
-    fetchAgain,
-  } = useContext(AppContext);
+  const { chats, setChats, setSelectedChat } = useContext(AppContext);
 
   const [
     searchUsers,
@@ -116,7 +101,12 @@ function SearchModal({ children }) {
       <span onClick={onOpen} style={{ width: "100%" }}>
         {children}
       </span>
-      <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={handleClose}>
+      <Modal
+        blockScrollOnMount={false}
+        isOpen={isOpen}
+        onClose={handleClose}
+        autoFocus={true}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader
@@ -131,7 +121,7 @@ function SearchModal({ children }) {
           <ModalBody display="flex" flexDir="column" alignItems="center">
             <FormControl mb={3}>
               <Input
-                placeholder="Add Users"
+                placeholder="Search Users"
                 mb={1}
                 onChange={(e) => handleSearch(e.target.value)}
               />
@@ -141,7 +131,7 @@ function SearchModal({ children }) {
               <Spinner m="auto" display="flex" />
             ) : (
               searchResult
-                ?.slice(0, 4)
+                ?.slice(0, 6)
                 .map((user) => (
                   <UserListItem
                     key={user._id}

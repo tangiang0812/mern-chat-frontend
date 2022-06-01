@@ -240,7 +240,7 @@ function ChatBox() {
               />
             </FormControl>
             <Button
-              colorScheme="blue"
+              colorScheme="twitter"
               color="white"
               onClick={handleSendMessage}
               isLoading={sendLoading}

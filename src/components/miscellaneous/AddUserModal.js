@@ -197,7 +197,7 @@ function AddUserModal({ children }) {
 
           <ModalFooter>
             <Button
-              colorScheme="blue"
+              colorScheme="twitter"
               mr={3}
               onClick={handleAddToGroup}
               isLoading={addLoading}

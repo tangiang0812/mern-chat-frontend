@@ -27,7 +27,7 @@ function Chat() {
       </Box>
       <Box
         h="92.5vh"
-        display={{ base: "flex", xl: "none" }}
+        display={{ base: "flex", lg: "none" }}
         alignItems="center"
         justifyContent="center"
       >

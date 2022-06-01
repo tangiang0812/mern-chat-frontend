@@ -47,7 +47,7 @@ function Navigation() {
         >
           IMess
         </Text> */}
-        <img src={download} width="32"></img>
+        <img src={download} width="40"></img>
       </Link>
       {!user && (
         <div>

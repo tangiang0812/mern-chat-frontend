@@ -109,13 +109,13 @@ function RenameGroupModal({ children }) {
           >
             <FormControl>
               <Input
-                placeholder="New name"
+                placeholder="New Group Name"
                 mr={3}
                 onChange={(e) => setGroupChatName(e.target.value)}
               />
             </FormControl>
             <Button
-              colorScheme="blue"
+              colorScheme="twitter"
               ml={3}
               onClick={handleRenameGroup}
               isLoading={renameLoading}

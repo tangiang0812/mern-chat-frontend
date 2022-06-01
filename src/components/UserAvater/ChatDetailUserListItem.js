@@ -43,7 +43,12 @@ function ChatDetailUserListItem({
         name={selectedUser.name}
         src={selectedUser.picture}
       />
-      <Box display="flex" flexDir="column" alignItems="flex-start">
+      <Box
+        display="flex"
+        flexDir="column"
+        alignItems="flex-start"
+        overflow="hidden"
+      >
         <Text>{selectedUser.name}</Text>
         {selectedChat.groupAdmin?._id === selectedUser._id && (
           <Text fontSize="xs">Group admin</Text>

@@ -40,7 +40,7 @@ function Sidebar() {
   const scrollIntoView = () => {
     chatRef.current?.scrollIntoView({
       behavior: "auto",
-      block: "end",
+      block: "nearest",
       inline: "nearest",
     });
   };
@@ -127,6 +127,7 @@ function Sidebar() {
                 onClick={() => {
                   setSelectedChat(chat);
                 }}
+                height="64px"
                 cursor="pointer"
                 bg={selectedChat === chat ? "#638bfa" : "#E8E8E8"}
                 color={selectedChat === chat ? "white" : "black"}
@@ -145,14 +146,14 @@ function Sidebar() {
                   name={chat.chatName}
                   src={chat.users[0].picture}
                 />
-                <Box>
-                  <Text>
+                <Box overflow="hidden" display="flex" flexDir="column">
+                  <Text overflow="hidden">
                     {!chat.isGroupChat
                       ? getSender(user, chat.users).name
                       : chat.chatName}
                   </Text>
                   {/* {chat.latestMessage && (
-                    <Text fontSize="xs">
+                    <Text fontSize="xs" overflow="hidden">
                       <b>{chat.latestMessage.sender.name} : </b>
                       {chat.latestMessage.content.length > 50
                         ? chat.latestMessage.content.substring(0, 51) + "..."
