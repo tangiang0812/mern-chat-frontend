@@ -24,7 +24,6 @@ function Login() {
   const navigate = useNavigate();
 
   const [loginUser, { isLoading, error }] = useLoginUserMutation();
-  const [validated, setValidated] = useState(false);
 
   const toast = useToast();
 
@@ -55,7 +54,6 @@ function Login() {
         });
       }
     });
-    setValidated(true);
   };
 
   // function handleLogin(e) {
@@ -116,7 +114,7 @@ function Login() {
         ></Input>
       </FormControl> */}
           <Button
-            colorScheme="blue"
+            colorScheme="twitter"
             width="100%"
             color="white"
             style={{ marginTop: 25 }}
@@ -125,13 +123,13 @@ function Login() {
           >
             Login
           </Button>
+          <div className="mt-3">
+            <p className="text-center">
+              {" "}
+              Don't have an account ? <Link to="/signup">Signup</Link>
+            </p>
+          </div>
         </VStack>
-        <div className="mt-3">
-          <p className="text-center">
-            {" "}
-            Don't have an account ? <Link to="/signup">Signup</Link>
-          </p>
-        </div>
       </Box>
     </Container>
   );

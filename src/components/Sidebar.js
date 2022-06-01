@@ -1,17 +1,6 @@
-import { AddIcon, CloseIcon, Search2Icon } from "@chakra-ui/icons";
-import {
-  Avatar,
-  Box,
-  Button,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Spinner,
-  Stack,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { AddIcon, Search2Icon } from "@chakra-ui/icons";
+import { Avatar, Box, Button, Stack, Text, useToast } from "@chakra-ui/react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 // import ChatLoading from "./ChatLoading";
 import { getSender } from "../config/ChatLogics";

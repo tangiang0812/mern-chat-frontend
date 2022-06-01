@@ -20,7 +20,9 @@ import {
 import ScrollableFeed from "./miscellaneous/ScrollableFeed";
 import io from "socket.io-client";
 
+// const ENDPOINT = "https://chat-toy.herokuapp.com";
 const ENDPOINT = "http://localhost:4000";
+
 let socket, previousSelectedChat;
 
 function ChatBox() {
@@ -30,8 +32,17 @@ function ChatBox() {
 
   const toast = useToast();
 
-  const { selectedChat, showDetail, setShowDetail, setChats, chats } =
-    useContext(AppContext);
+  const {
+    selectedChat,
+    showDetail,
+    setShowDetail,
+    setChats,
+    chats,
+    // notifications,
+    // setNotifications,
+    fetchAgain,
+    setFetchAgain,
+  } = useContext(AppContext);
 
   const inputField = useRef(null);
 
@@ -62,7 +73,7 @@ function ChatBox() {
     sendMessage(payload).then(({ data, error }) => {
       if (data) {
         socket.emit("new-message", data);
-        console.log(data);
+        // console.log(data);
         setMessages([...messages, data]);
 
         if (selectedChat !== chats[0]) {
@@ -115,7 +126,7 @@ function ChatBox() {
         token: user.token,
       },
     });
-    socket.emit("setup", user);
+    socket.emit("setup");
     // console.log(user);
     // socket.on("connected", () => setSocketConnected(true));
   }, []);
@@ -127,12 +138,20 @@ function ChatBox() {
 
   useEffect(() => {
     socket.on("message-received", (receivedMessage) => {
+      console.log(receivedMessage);
       if (
         !previousSelectedChat ||
         previousSelectedChat._id !== receivedMessage.chat
       ) {
+        if (!chats.find((chat) => chat._id === receivedMessage.chat)) {
+          setFetchAgain(!fetchAgain);
+        }
+        // if (!notifications.includes(receivedMessage)) {
+        //   setNotifications([receivedMessage, ...notifications]);
+        //   // setFetchAgain(!fetchAgain);
+        // }
       } else {
-        console.log(receivedMessage);
+        // console.log(receivedMessage);
         setMessages([...messages, receivedMessage]);
       }
     });

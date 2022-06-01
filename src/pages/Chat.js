@@ -1,10 +1,8 @@
 import { Box, Text } from "@chakra-ui/react";
-import { useContext } from "react";
 import { useSelector } from "react-redux";
 import ChatBox from "../components/ChatBox";
 import Sidebar from "../components/Sidebar";
 import ChatDetail from "../components/ChatDetail";
-import { AppContext } from "../context/appContext";
 
 function Chat() {
   const user = useSelector((state) => state.user);

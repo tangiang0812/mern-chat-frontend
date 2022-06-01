@@ -16,6 +16,7 @@ function App() {
   const [chats, setChats] = useState([]);
   const [showDetail, setShowDetail] = useState(false);
   const [fetchAgain, setFetchAgain] = useState(false);
+  // const [notification, setNotification] = useState([]);
 
   return (
     <AppContext.Provider
@@ -28,6 +29,8 @@ function App() {
         setShowDetail,
         fetchAgain,
         setFetchAgain,
+        // notifications,
+        // setNotifications,
       }}
     >
       <BrowserRouter>

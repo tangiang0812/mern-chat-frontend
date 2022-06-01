@@ -22,7 +22,6 @@ import UserListItem from "../UserAvater/UserListItem";
 
 function SearchModal({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
 
@@ -43,7 +42,6 @@ function SearchModal({ children }) {
     useAccessChatMutation();
 
   const handleClose = () => {
-    setSelectedUsers([]);
     setSearchResult([]);
     setSearch("");
     onClose();

@@ -4,10 +4,8 @@ import {
   Button,
   Menu,
   MenuButton,
-  MenuDivider,
   MenuItem,
   MenuList,
-  Text,
 } from "@chakra-ui/react";
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import React, { useContext } from "react";
@@ -21,6 +19,8 @@ import { AppContext } from "../context/appContext";
 function Navigation() {
   const user = useSelector((state) => state.user);
   const { setSelectedChat, setChats } = useContext(AppContext);
+  // const { setSelectedChat, setChats, notifications, setNotifications } =
+  //   useContext(AppContext);
   const [logoutUser, { isLoading, error }] = useLogoutUserMutation();
 
   const handleLogout = async (event) => {
@@ -47,7 +47,7 @@ function Navigation() {
         >
           IMess
         </Text> */}
-        <img src={download} width="40"></img>
+        <img src={download} width="40" alt="Logo"></img>
       </Link>
       {!user && (
         <div>
@@ -62,12 +62,17 @@ function Navigation() {
 
       {user && (
         <div>
-          <Menu>
+          {/* <Menu>
             <MenuButton p={1}>
               <BellIcon fontSize="2xl" m={1}></BellIcon>
             </MenuButton>
-            {/* <MenuList> </MenuList> */}
-          </Menu>
+            <MenuList>
+              {!notifications.length && <MenuItem>No new messages</MenuItem>}
+              {notifications.map((notification) => (
+                <MenuItem key={notification.id}></MenuItem>
+              ))}
+            </MenuList>
+          </Menu> */}
           <Menu>
             <MenuButton
               m={1}

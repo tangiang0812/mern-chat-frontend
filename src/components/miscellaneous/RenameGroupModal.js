@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   FormControl,
   Input,
@@ -13,25 +12,16 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-// import axios from "axios";
 import React, { useContext, useState } from "react";
 import { useSelector } from "react-redux";
 import { AppContext } from "../../context/appContext";
-import {
-  useCreateGroupChatMutation,
-  useLazySearchUsersQuery,
-  useRenameGroupMutation,
-} from "../../services/appApi";
-import UserListItem from "../UserAvater/UserListItem";
-import UserBadgeItem from "../UserAvater/UserBadgeItem";
+import { useRenameGroupMutation } from "../../services/appApi";
 
 function RenameGroupModal({ children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [groupChatName, setGroupChatName] = useState();
 
   const toast = useToast();
-
-  const user = useSelector((state) => state.user);
 
   const { setFetchAgain, fetchAgain, selectedChat } = useContext(AppContext);
 

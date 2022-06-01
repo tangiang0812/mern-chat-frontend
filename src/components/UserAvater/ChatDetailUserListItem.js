@@ -2,13 +2,11 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import {
   Avatar,
   Box,
-  Button,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   Text,
-  useToast,
 } from "@chakra-ui/react";
 import React, { useContext } from "react";
 import { useSelector } from "react-redux";

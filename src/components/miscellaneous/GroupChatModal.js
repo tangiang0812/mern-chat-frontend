@@ -31,11 +31,9 @@ function GroupChatModal({ children }) {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   const toast = useToast();
-
-  const user = useSelector((state) => state.user);
 
   const { chats, setChats, setSelectedChat, setFetchAgain, fetchAgain } =
     useContext(AppContext);

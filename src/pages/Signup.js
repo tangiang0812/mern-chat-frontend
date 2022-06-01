@@ -28,15 +28,12 @@ function Signup() {
 
   const toast = useToast();
 
-  const [validated, setValidated] = useState(false);
-
   const handleSignup = async (event) => {
     const form = event.currentTarget;
     event.preventDefault();
     if (form.checkValidity() === false) {
       event.stopPropagation();
     }
-    setValidated(true);
     signupUser({ name, email, password }).then(({ data, error }) => {
       if (data) {
         toast({
@@ -128,7 +125,7 @@ function Signup() {
         ></Input>
       </FormControl> */}
           <Button
-            colorScheme="blue"
+            colorScheme="twitter"
             width="100%"
             color="white"
             style={{ marginTop: 25 }}

@@ -3,8 +3,10 @@ import { Box, Button } from "@chakra-ui/react";
 import "./Home.css";
 import download2 from "../assets/download2.png";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Home() {
+  const user = useSelector((state) => state.user);
   return (
     <Box
       display="flex"
@@ -13,9 +15,9 @@ function Home() {
       height="85vh"
     >
       <Box display="flex" m="auto" flexDir="column" alignItems="center">
-        <img src={download2} />
-        <Link to="/chat">
-          <Button mt={3}>
+        <img src={download2} alt="logo2" />
+        <Link to={user ? "/chat" : "login"}>
+          <Button mt={3} colorScheme="twitter">
             Get Started
             <i className="fas fa-comments home-message-icon"></i>
           </Button>
