@@ -39,7 +39,7 @@ function ChatDetailUserListItem({
         size="sm"
         cursor="pointer"
         name={selectedUser.name}
-        src={selectedUser.picture}
+        // src={selectedUser.picture}
       />
       <Box
         display="flex"

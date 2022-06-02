@@ -10,7 +10,7 @@ function Chat() {
   return (
     <div style={{ width: "100%" }}>
       <Box
-        display={{ base: "none", lg: "flex" }}
+        display={{ lg: "flex" }}
         justifyContent="space-between"
         w="100%"
         h="92.5vh"
@@ -23,7 +23,7 @@ function Chat() {
         {<ChatBox />}
         {<ChatDetail />} */}
       </Box>
-      <Box
+      {/* <Box
         h="92.5vh"
         display={{ base: "flex", lg: "none" }}
         alignItems="center"
@@ -32,7 +32,7 @@ function Chat() {
         <Text fontSize="3xl" pb={3}>
           Expand your browser window to be able to chat.
         </Text>
-      </Box>
+      </Box> */}
     </div>
   );
 }

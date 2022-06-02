@@ -56,7 +56,7 @@ const ScrollableFeed = ({ messages }) => {
                     mr="4px"
                     size="sm"
                     name={m.sender.name}
-                    src={m.sender.picture}
+                    // src={m.sender.picture}
                   />
                 ) : (
                   <Box w="36px" />

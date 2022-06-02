@@ -83,7 +83,7 @@ function Navigation() {
                 size="sm"
                 cursor="pointer"
                 name={user.name}
-                src={user.picture}
+                // src={user.picture}
               ></Avatar>
             </MenuButton>
             <MenuList>

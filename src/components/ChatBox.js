@@ -1,6 +1,5 @@
 import { InfoOutlineIcon } from "@chakra-ui/icons";
 import {
-  Avatar,
   Box,
   Button,
   FormControl,
@@ -9,7 +8,13 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { useSelector } from "react-redux";
 import { getSender } from "../config/ChatLogics";
 import { AppContext } from "../context/appContext";
@@ -20,12 +25,13 @@ import {
 import ScrollableFeed from "./miscellaneous/ScrollableFeed";
 import io from "socket.io-client";
 
-// const ENDPOINT = "https://chat-toy.herokuapp.com";
-const ENDPOINT = "http://localhost:4000";
+const ENDPOINT = "https://chat-toy.herokuapp.com";
+// const ENDPOINT = "http://localhost:4000";
 
-let socket, previousSelectedChat;
+let socket, previousSelectedChat; // previous selectedChat at the moment receiving notification, not the current selectedChat
 
 function ChatBox() {
+  // const [state, dispatch] = useReducer(reducer, { messages: [] });
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState();
   const [socketConnected, setSocketConnected] = useState(false);
@@ -129,6 +135,11 @@ function ChatBox() {
     socket.emit("setup");
     // console.log(user);
     // socket.on("connected", () => setSocketConnected(true));
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -137,8 +148,7 @@ function ChatBox() {
   }, [selectedChat]);
 
   useEffect(() => {
-    socket.on("message-received", (receivedMessage) => {
-      console.log(receivedMessage);
+    socket.off("message-received").on("message-received", (receivedMessage) => {
       if (
         !previousSelectedChat ||
         previousSelectedChat._id !== receivedMessage.chat
@@ -151,7 +161,6 @@ function ChatBox() {
         //   // setFetchAgain(!fetchAgain);
         // }
       } else {
-        // console.log(receivedMessage);
         setMessages([...messages, receivedMessage]);
       }
     });

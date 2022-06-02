@@ -131,7 +131,7 @@ function Sidebar() {
                   size="md"
                   cursor="pointer"
                   name={chat.chatName}
-                  src={chat.users[0].picture}
+                  // src={chat.users[0].picture}
                 />
                 <Box overflow="hidden" display="flex" flexDir="column">
                   <Text overflow="hidden">

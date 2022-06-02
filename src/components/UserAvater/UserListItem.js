@@ -25,7 +25,7 @@ function UserListItem({ user, handleFunction }) {
         size="sm"
         cursor="pointer"
         name={user.name}
-        src={user.picture}
+        // src={user.picture}
       />
       <Box display="flex" flexDir="column" alignItems="flex-start">
         <Text>{user.name}</Text>
