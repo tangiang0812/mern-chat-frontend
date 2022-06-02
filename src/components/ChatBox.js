@@ -30,9 +30,23 @@ const ENDPOINT = "https://chat-toy.herokuapp.com";
 
 let socket, previousSelectedChat; // previous selectedChat at the moment receiving notification, not the current selectedChat
 
+const ACTIONS = {
+  FETCH_MESSAGES: "fetch-messages",
+  ADD_MESSAGE: "add-message",
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case ACTIONS.FETCH_MESSAGES:
+      return { messages: action.payload.messages };
+    case ACTIONS.ADD_MESSAGE:
+      return { messages: [...state.messages, action.payload.newMessage] };
+  }
+}
+
 function ChatBox() {
-  // const [state, dispatch] = useReducer(reducer, { messages: [] });
-  const [messages, setMessages] = useState([]);
+  const [state, dispatch] = useReducer(reducer, { messages: [] });
+  // const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState();
   const [socketConnected, setSocketConnected] = useState(false);
 
@@ -80,7 +94,8 @@ function ChatBox() {
       if (data) {
         socket.emit("new-message", data);
         // console.log(data);
-        setMessages([...messages, data]);
+        // setMessages([...messages, data]);
+        dispatch({ type: ACTIONS.ADD_MESSAGE, payload: { newMessage: data } });
 
         if (selectedChat !== chats[0]) {
           setChats([
@@ -111,7 +126,10 @@ function ChatBox() {
     };
     fetchMessages(payload).then(({ data, error }) => {
       if (data) {
-        setMessages(data);
+        dispatch({
+          type: ACTIONS.FETCH_MESSAGES,
+          payload: { messages: data },
+        });
         socket.emit("join-chat", selectedChat._id);
       } else if (error) {
         toast({
@@ -161,7 +179,12 @@ function ChatBox() {
         //   // setFetchAgain(!fetchAgain);
         // }
       } else {
-        setMessages([...messages, receivedMessage]);
+        dispatch({
+          type: ACTIONS.ADD_MESSAGE,
+          payload: { newMessage: receivedMessage },
+        });
+
+        // setMessages([...state.messages, receivedMessage]);
       }
     });
   });
@@ -194,7 +217,7 @@ function ChatBox() {
               px={2}
               w="100%"
             >
-              {messages &&
+              {state.messages &&
                 (!selectedChat.isGroupChat ? (
                   <>{getSender(user, selectedChat.users).name}</>
                 ) : (
@@ -231,7 +254,7 @@ function ChatBox() {
             {fetchFetching ? (
               <Spinner m="auto" alignSelf="center"></Spinner>
             ) : (
-              <ScrollableFeed messages={messages} />
+              <ScrollableFeed messages={state.messages} />
             )}
           </Box>
           <Box
