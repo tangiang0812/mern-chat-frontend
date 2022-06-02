@@ -25,8 +25,8 @@ import {
 import ScrollableFeed from "./miscellaneous/ScrollableFeed";
 import io from "socket.io-client";
 
-const ENDPOINT = "https://chat-toy.herokuapp.com";
-// const ENDPOINT = "http://localhost:4000";
+// const ENDPOINT = "https://chat-toy.herokuapp.com";
+const ENDPOINT = "http://localhost:4000";
 
 let socket, previousSelectedChat; // previous selectedChat at the moment receiving notification, not the current selectedChat
 
@@ -93,9 +93,8 @@ function ChatBox() {
     sendMessage(payload).then(({ data, error }) => {
       if (data) {
         socket.emit("new-message", data);
-        // console.log(data);
         // setMessages([...messages, data]);
-        dispatch({ type: ACTIONS.ADD_MESSAGE, payload: { newMessage: data } });
+        // dispatch({ type: ACTIONS.ADD_MESSAGE, payload: { newMessage: data } });
 
         if (selectedChat !== chats[0]) {
           setChats([
@@ -183,8 +182,6 @@ function ChatBox() {
           type: ACTIONS.ADD_MESSAGE,
           payload: { newMessage: receivedMessage },
         });
-
-        // setMessages([...state.messages, receivedMessage]);
       }
     });
   });
@@ -264,12 +261,7 @@ function ChatBox() {
             justifyContent="space-between"
             alignItems="center"
           >
-            <FormControl
-              onKeyDown={handleSendMessage}
-              id="first-name"
-              isRequired
-              mt={3}
-            >
+            <FormControl onKeyDown={handleSendMessage} isRequired mt={3}>
               {false ? (
                 <></>
               ) : (
@@ -288,14 +280,14 @@ function ChatBox() {
                 placeholder="Enter a message.."
                 ref={inputField}
                 onChange={(e) => typingHandler(e.target.value)}
-                disabled={sendLoading}
+                // disabled={sendLoading}
               />
             </FormControl>
             <Button
               colorScheme="twitter"
               color="white"
               onClick={handleSendMessage}
-              isLoading={sendLoading}
+              // isLoading={sendLoading}
               mt={3}
               ml={3}
             >
