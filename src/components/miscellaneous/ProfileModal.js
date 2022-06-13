@@ -8,8 +8,8 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Image,
   Text,
+  Avatar,
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -36,12 +36,14 @@ function ProfileModal({ user, children }) {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Image
-              borderRadius="full"
-              boxSize="150px"
-              src={user.picture}
-              alt={user.name}
-            ></Image>
+            <Avatar
+              mt="1px"
+              mr="4px"
+              size="2xl"
+              name={user.name}
+              mb="3px"
+              // src={m.sender.picture}
+            />
             <Text
               fontSize={{ base: "28px", md: "30px" }}
               fontFamily="Work sans"
@@ -51,7 +53,7 @@ function ProfileModal({ user, children }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button mr={3} onClick={onClose} colorScheme="twitter">
               Close
             </Button>
           </ModalFooter>

@@ -130,7 +130,11 @@ function Sidebar() {
                   mr={2}
                   size="md"
                   cursor="pointer"
-                  name={chat.chatName}
+                  name={
+                    !chat.isGroupChat
+                      ? getSender(user, chat.users).name
+                      : chat.chatName
+                  }
                   // src={chat.users[0].picture}
                 />
                 <Box overflow="hidden" display="flex" flexDir="column">
