@@ -4,10 +4,17 @@ import {
   Button,
   FormControl,
   Input,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Portal,
   Spinner,
   Text,
   useToast,
 } from "@chakra-ui/react";
+import Picker from "emoji-picker-react";
 import React, {
   useContext,
   useEffect,
@@ -46,8 +53,6 @@ function reducer(state, action) {
 
 function ChatBox() {
   const [state, dispatch] = useReducer(reducer, { messages: [] });
-  // const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState();
   const [socketConnected, setSocketConnected] = useState(false);
 
   const toast = useToast();
@@ -74,21 +79,23 @@ function ChatBox() {
   const [fetchMessages, { isFetching: fetchFetching, error: fetchError }] =
     useLazyFetchMessagesQuery();
 
-  const typingHandler = (msg) => {
-    setNewMessage(msg);
+  const typingHandler = (msg) => {};
+
+  const onEmojiClick = (event, emojiObject) => {
+    inputField.current.value += emojiObject.emoji;
   };
 
   const handleSendMessage = async (event) => {
-    if ((event?.key && event.key !== "Enter") || !newMessage) return;
-    // if ((event.key && event.key === "Enter") || newMessage) {
-
-    inputField.current.value = "";
-    setNewMessage("");
+    console.log(inputField.current.value);
+    if ((event?.key && event.key !== "Enter") || !inputField.current.value)
+      return;
 
     const payload = {
-      content: newMessage,
+      content: inputField.current.value,
       chatId: selectedChat._id,
     };
+
+    inputField.current.value = "";
 
     sendMessage(payload).then(({ data, error }) => {
       if (data) {
@@ -279,10 +286,26 @@ function ChatBox() {
                 variant="filled"
                 placeholder="Enter a message.."
                 ref={inputField}
-                onChange={(e) => typingHandler(e.target.value)}
-                // disabled={sendLoading}
               />
             </FormControl>
+            <Popover offset={[-70, 10]}>
+              <PopoverTrigger>
+                <Button mt={3} ml={3} colorScheme="twitter">
+                  <i className="fa-solid fa-face-smile"></i>
+                </Button>
+              </PopoverTrigger>
+              <Portal>
+                <PopoverContent>
+                  <PopoverArrow />
+                  <PopoverBody>
+                    <Picker
+                      onEmojiClick={onEmojiClick}
+                      pickerStyle={{ width: "100%" }}
+                    />
+                  </PopoverBody>
+                </PopoverContent>
+              </Portal>
+            </Popover>
             <Button
               colorScheme="twitter"
               color="white"
