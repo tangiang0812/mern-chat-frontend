@@ -27,7 +27,8 @@ function SearchModal({ children }) {
 
   const toast = useToast();
 
-  const { chats, setChats, setSelectedChat } = useContext(AppContext);
+  const { chats, setChats, setSelectedChat, setPreviousSelectedChat } =
+    useContext(AppContext);
 
   const [
     searchUsers,
@@ -72,8 +73,10 @@ function SearchModal({ children }) {
         if (!chats.find((chat) => chat._id === data._id)) {
           setChats([data, ...chats]);
           setSelectedChat(data);
+          setPreviousSelectedChat(data);
         } else {
           setSelectedChat(chats.find((chat) => chat._id === data._id));
+          setPreviousSelectedChat(chats.find((chat) => chat._id === data._id));
         }
 
         // update chat with fetchAgain

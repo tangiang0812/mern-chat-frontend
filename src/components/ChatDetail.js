@@ -22,6 +22,7 @@ function ChatDetail() {
     setFetchAgain,
     chats,
     setChats,
+    setPreviousSelectedChat,
   } = useContext(AppContext);
 
   const user = useSelector((state) => state.user);
@@ -60,8 +61,10 @@ function ChatDetail() {
         if (!chats.find((chat) => chat._id === data._id)) {
           setChats([data, ...chats]);
           setSelectedChat(data);
+          setPreviousSelectedChat(data);
         } else {
           setSelectedChat(chats.find((chat) => chat._id === data._id));
+          setPreviousSelectedChat(chats.find((chat) => chat._id === data._id));
         }
       } else if (error) {
         toast({
