@@ -35,7 +35,8 @@ import io from "socket.io-client";
 // const ENDPOINT = "https://chat-toy.herokuapp.com";
 const ENDPOINT = "http://localhost:4000";
 
-let socket, previousSelectedChat; // previous selectedChat at the moment receiving notification, not the current selectedChat
+let socket;
+// previousSelectedChat; // previous selectedChat at the moment receiving notification, not the current selectedChat
 
 const ACTIONS = {
   FETCH_MESSAGES: "fetch-messages",
@@ -54,6 +55,7 @@ function reducer(state, action) {
 function ChatBox() {
   const [state, dispatch] = useReducer(reducer, { messages: [] });
   const [socketConnected, setSocketConnected] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const toast = useToast();
 
@@ -67,6 +69,7 @@ function ChatBox() {
     // setNotifications,
     fetchAgain,
     setFetchAgain,
+    previousSelectedChat,
   } = useContext(AppContext);
 
   const inputField = useRef(null);
@@ -126,10 +129,17 @@ function ChatBox() {
   };
 
   const handleFetchMessages = async () => {
-    if (!selectedChat) return;
+    if (
+      !selectedChat ||
+      (previousSelectedChat._id === selectedChat._id &&
+        previousSelectedChat !== selectedChat)
+    )
+      return;
     const payload = {
       chatId: selectedChat._id,
     };
+
+    setLoading(true);
     fetchMessages(payload).then(({ data, error }) => {
       if (data) {
         dispatch({
@@ -137,7 +147,10 @@ function ChatBox() {
           payload: { messages: data },
         });
         socket.emit("join-chat", selectedChat._id);
+        setLoading(false);
       } else if (error) {
+        setLoading(false);
+
         toast({
           title: "Error Occured!",
           description: "Failed to Load the Messages",
@@ -168,7 +181,6 @@ function ChatBox() {
 
   useEffect(() => {
     handleFetchMessages();
-    previousSelectedChat = selectedChat;
   }, [selectedChat]);
 
   useEffect(() => {
@@ -255,7 +267,7 @@ function ChatBox() {
             borderRadius="lg"
             overflowY="scroll"
           >
-            {fetchFetching ? (
+            {loading ? (
               <Spinner m="auto" alignSelf="center"></Spinner>
             ) : (
               <ScrollableFeed messages={state.messages} />

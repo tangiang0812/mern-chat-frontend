@@ -12,8 +12,14 @@ import ChatLoading from "./UserAvater/ChatLoading";
 import SearchModal from "./miscellaneous/SearchModal";
 
 function Sidebar() {
-  const { selectedChat, setSelectedChat, chats, setChats, fetchAgain } =
-    useContext(AppContext);
+  const {
+    selectedChat,
+    setSelectedChat,
+    chats,
+    setChats,
+    fetchAgain,
+    setPreviousSelectedChat,
+  } = useContext(AppContext);
 
   const user = useSelector((state) => state.user);
 
@@ -113,6 +119,7 @@ function Sidebar() {
               <Box
                 onClick={() => {
                   setSelectedChat(chat);
+                  setPreviousSelectedChat(chat);
                 }}
                 height="64px"
                 cursor="pointer"

@@ -13,6 +13,7 @@ import { useState } from "react";
 function App() {
   const user = useSelector((state) => state.user);
   const [selectedChat, setSelectedChat] = useState();
+  const [previousSelectedChat, setPreviousSelectedChat] = useState();
   const [chats, setChats] = useState([]);
   const [showDetail, setShowDetail] = useState(false);
   const [fetchAgain, setFetchAgain] = useState(false);
@@ -29,6 +30,8 @@ function App() {
         setShowDetail,
         fetchAgain,
         setFetchAgain,
+        previousSelectedChat,
+        setPreviousSelectedChat,
         // notifications,
         // setNotifications,
       }}
