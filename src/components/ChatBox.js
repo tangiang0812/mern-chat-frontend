@@ -325,7 +325,16 @@ function ChatBox() {
                 ref={inputField}
               />
             </FormControl>
-            <Popover offset={[-70, 10]}>
+            <Popover
+              offset={[-70, 10]}
+              onClose={(e) => {
+                inputField.current.focus();
+                inputField.current.setSelectionRange(
+                  inputField.current.value.length - 1,
+                  inputField.current.value.length - 1
+                );
+              }}
+            >
               <PopoverTrigger>
                 <Button mt={3} ml={3} colorScheme="twitter">
                   <i className="fa-solid fa-face-smile"></i>
@@ -336,6 +345,8 @@ function ChatBox() {
                   <PopoverArrow />
                   <PopoverBody>
                     <Picker
+                      native
+                      disableSearchBar
                       onEmojiClick={onEmojiClick}
                       pickerStyle={{ width: "100%" }}
                     />
