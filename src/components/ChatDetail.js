@@ -40,7 +40,27 @@ function ChatDetail() {
     };
     removeFromGroup(payload).then(({ data, error }) => {
       if (data) {
-        setFetchAgain(!fetchAgain);
+        if (selectedUser._id === user._id) {
+          setSelectedChat();
+          setChats((prevChatState) => {
+            const newChatState = prevChatState.filter(
+              (chat) => chat._id !== data._id
+            );
+            return newChatState;
+          });
+        } else {
+          setSelectedChat(data);
+          setChats((prevChatState) => {
+            const newChatState = prevChatState.map((chat) => {
+              if (chat._id === data._id) {
+                return data;
+              }
+              return chat;
+            });
+            return newChatState;
+          });
+        }
+        // setFetchAgain(!fetchAgain);
         // selectedUser._id === user._id && setSelectedChat();
       } else if (error) {
         toast({
@@ -58,13 +78,14 @@ function ChatDetail() {
   const handleAccessChat = async (userId) => {
     accessChat({ userId }).then(({ data, error }) => {
       if (data) {
-        if (!chats.find((chat) => chat._id === data._id)) {
+        const foundChat = chats.find((chat) => chat._id === data._id);
+        if (!foundChat) {
           setChats([data, ...chats]);
           setSelectedChat(data);
           setPreviousSelectedChat(data);
         } else {
-          setSelectedChat(chats.find((chat) => chat._id === data._id));
-          setPreviousSelectedChat(chats.find((chat) => chat._id === data._id));
+          setSelectedChat(foundChat);
+          setPreviousSelectedChat(foundChat);
         }
       } else if (error) {
         toast({
@@ -81,7 +102,7 @@ function ChatDetail() {
 
   return (
     <Box
-      display={{ md: showDetail ? "flex" : "none" }}
+      display={{ base: showDetail ? "flex" : "none" }}
       flexDir="column"
       alignItems="center"
       p={3}

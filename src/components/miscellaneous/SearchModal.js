@@ -70,13 +70,14 @@ function SearchModal({ children }) {
     accessChat({ userId }).then(({ data, error }) => {
       if (data) {
         // update chat without fetch
-        if (!chats.find((chat) => chat._id === data._id)) {
+        const foundChat = chats.find((chat) => chat._id === data._id);
+        if (!foundChat) {
           setChats([data, ...chats]);
           setSelectedChat(data);
           setPreviousSelectedChat(data);
         } else {
-          setSelectedChat(chats.find((chat) => chat._id === data._id));
-          setPreviousSelectedChat(chats.find((chat) => chat._id === data._id));
+          setSelectedChat(foundChat);
+          setPreviousSelectedChat(foundChat);
         }
 
         // update chat with fetchAgain

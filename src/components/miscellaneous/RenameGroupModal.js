@@ -23,7 +23,14 @@ function RenameGroupModal({ children }) {
 
   const toast = useToast();
 
-  const { setFetchAgain, fetchAgain, selectedChat } = useContext(AppContext);
+  const {
+    setFetchAgain,
+    fetchAgain,
+    selectedChat,
+    setChats,
+    setSelectedChat,
+    chats,
+  } = useContext(AppContext);
 
   const [renameGroup, { isLoading: renameLoading, error: renameError }] =
     useRenameGroupMutation();
@@ -52,7 +59,17 @@ function RenameGroupModal({ children }) {
 
     renameGroup(payload).then(({ data, error }) => {
       if (data) {
-        setFetchAgain(!fetchAgain);
+        setSelectedChat(data);
+        setChats((prevChatState) => {
+          const newChatState = prevChatState.map((chat) => {
+            if (chat._id === data._id) {
+              return data;
+            }
+            return chat;
+          });
+          return newChatState;
+        });
+        // setFetchAgain(!fetchAgain);
         // setChats([data, ...chats]);
         handleClose();
         toast({

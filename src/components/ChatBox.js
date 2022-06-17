@@ -89,7 +89,6 @@ function ChatBox() {
   };
 
   const handleSendMessage = async (event) => {
-    console.log(inputField.current.value);
     if ((event?.key && event.key !== "Enter") || !inputField.current.value)
       return;
 
@@ -140,7 +139,7 @@ function ChatBox() {
     };
 
     setLoading(true);
-    fetchMessages(payload).then(({ data, error }) => {
+    fetchMessages(selectedChat._id).then(({ data, error }) => {
       if (data) {
         dispatch({
           type: ACTIONS.FETCH_MESSAGES,
@@ -190,7 +189,6 @@ function ChatBox() {
         previousSelectedChat._id !== receivedMessage.chat
       ) {
         if (!chats.find((chat) => chat._id === receivedMessage.chat)) {
-          setFetchAgain(!fetchAgain);
         }
         // if (!notifications.includes(receivedMessage)) {
         //   setNotifications([receivedMessage, ...notifications]);
@@ -202,6 +200,7 @@ function ChatBox() {
           payload: { newMessage: receivedMessage },
         });
       }
+      setFetchAgain(!fetchAgain);
     });
   });
 

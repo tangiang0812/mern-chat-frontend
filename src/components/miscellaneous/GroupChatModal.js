@@ -35,8 +35,14 @@ function GroupChatModal({ children }) {
 
   const toast = useToast();
 
-  const { chats, setChats, setSelectedChat, setFetchAgain, fetchAgain } =
-    useContext(AppContext);
+  const {
+    chats,
+    setChats,
+    setSelectedChat,
+    setFetchAgain,
+    fetchAgain,
+    setPreviousSelectedChat,
+  } = useContext(AppContext);
 
   const [
     searchUsers,
@@ -113,11 +119,14 @@ function GroupChatModal({ children }) {
 
     createGroupChat(payload).then(({ data, error }) => {
       if (data) {
-        if (!chats.find((chat) => chat._id === data._id)) {
+        const foundChat = chats.find((chat) => chat._id === data._id);
+        if (!foundChat) {
           setChats([data, ...chats]);
           setSelectedChat(data);
+          setPreviousSelectedChat(data);
         } else {
-          setSelectedChat(chats.find((chat) => chat._id === data._id));
+          setSelectedChat(foundChat);
+          setPreviousSelectedChat(foundChat);
         }
         handleClose();
         toast({

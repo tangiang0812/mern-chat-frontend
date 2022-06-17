@@ -46,8 +46,8 @@ const appApi = createApi({
     }),
 
     fetchChats: builder.query({
-      query: () => ({
-        url: "/api/chat/",
+      query: (chatId) => ({
+        url: `/api/chat/${chatId || ""}`,
         method: "GET",
       }),
     }),
@@ -100,8 +100,8 @@ const appApi = createApi({
     }),
 
     fetchMessages: builder.query({
-      query: (payload) => ({
-        url: `/api/message/${payload.chatId}`,
+      query: (chatId) => ({
+        url: `/api/message/${chatId}`,
         method: "GET",
       }),
     }),

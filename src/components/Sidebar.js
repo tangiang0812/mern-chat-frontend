@@ -44,6 +44,7 @@ function Sidebar() {
     fetchChats().then(({ data, error }) => {
       if (data) {
         setChats(data);
+        console.log(data);
         if (selectedChat) {
           let found = false;
           for (var chat of data) {

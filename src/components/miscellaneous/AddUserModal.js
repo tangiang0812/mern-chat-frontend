@@ -34,7 +34,8 @@ function AddUserModal({ children }) {
 
   const toast = useToast();
 
-  const { selectedChat, setFetchAgain, fetchAgain } = useContext(AppContext);
+  const { selectedChat, setFetchAgain, fetchAgain, setChats, setSelectedChat } =
+    useContext(AppContext);
 
   const [
     searchUsers,
@@ -120,7 +121,17 @@ function AddUserModal({ children }) {
 
     addToGroup(payload).then(({ data, error }) => {
       if (data) {
-        setFetchAgain(!fetchAgain);
+        setSelectedChat(data);
+        setChats((prevChatState) => {
+          const newChatState = prevChatState.map((chat) => {
+            if (chat._id === data._id) {
+              return data;
+            }
+            return chat;
+          });
+          return newChatState;
+        });
+        // setFetchAgain(!fetchAgain);
         // setChats([data, ...chats]);
         handleClose();
         toast({
