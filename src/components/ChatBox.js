@@ -70,6 +70,7 @@ function ChatBox() {
     fetchAgain,
     setFetchAgain,
     previousSelectedChat,
+    setSelectedChat,
   } = useContext(AppContext);
 
   const inputField = useRef(null);
@@ -101,16 +102,30 @@ function ChatBox() {
 
     sendMessage(payload).then(({ data, error }) => {
       if (data) {
-        socket.emit("new-message", data);
-        // setMessages([...messages, data]);
-        // dispatch({ type: ACTIONS.ADD_MESSAGE, payload: { newMessage: data } });
+        dispatch({ type: ACTIONS.ADD_MESSAGE, payload: { newMessage: data } });
+        setChats((previousChatState) => {
+          const newChatState = previousChatState.map((chat) => {
+            let newChat = chat;
+            if (chat._id === data.chat) {
+              newChat = { ...chat, latestMessage: data };
+            }
+            return newChat;
+          });
 
-        if (selectedChat !== chats[0]) {
-          setChats([
-            selectedChat,
-            ...chats.filter((chat) => chat !== selectedChat),
-          ]);
-        }
+          const newSelectedChat = newChatState.find(
+            (chat) => chat._id === selectedChat._id
+          );
+
+          setSelectedChat(newSelectedChat);
+          if (selectedChat._id !== newChatState[0]._id) {
+            return [
+              newSelectedChat,
+              ...newChatState.filter((chat) => chat._id !== selectedChat._id),
+            ];
+          }
+          return newChatState;
+        });
+        socket.emit("new-message", data);
 
         inputField.current.focus();
       } else if (error) {
@@ -134,9 +149,6 @@ function ChatBox() {
         previousSelectedChat !== selectedChat)
     )
       return;
-    const payload = {
-      chatId: selectedChat._id,
-    };
 
     setLoading(true);
     fetchMessages(selectedChat._id).then(({ data, error }) => {
@@ -145,7 +157,7 @@ function ChatBox() {
           type: ACTIONS.FETCH_MESSAGES,
           payload: { messages: data },
         });
-        socket.emit("join-chat", selectedChat._id);
+        // socket.emit("join-chat", selectedChat._id);
         setLoading(false);
       } else if (error) {
         setLoading(false);
@@ -189,6 +201,7 @@ function ChatBox() {
         previousSelectedChat._id !== receivedMessage.chat
       ) {
         if (!chats.find((chat) => chat._id === receivedMessage.chat)) {
+          return setFetchAgain(!fetchAgain);
         }
         // if (!notifications.includes(receivedMessage)) {
         //   setNotifications([receivedMessage, ...notifications]);
@@ -200,7 +213,20 @@ function ChatBox() {
           payload: { newMessage: receivedMessage },
         });
       }
-      setFetchAgain(!fetchAgain);
+      setChats((previousChatState) => {
+        const newChatState = previousChatState.map((chat) => {
+          let newChat = chat;
+          if (chat._id === receivedMessage.chat) {
+            newChat = { ...chat, latestMessage: receivedMessage };
+            if (selectedChat && newChat._id === selectedChat._id) {
+              setSelectedChat(newChat);
+            }
+          }
+
+          return newChat;
+        });
+        return newChatState;
+      });
     });
   });
 

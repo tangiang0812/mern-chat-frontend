@@ -151,14 +151,14 @@ function Sidebar() {
                       ? getSender(user, chat.users).name
                       : chat.chatName}
                   </Text>
-                  {/* {chat.latestMessage && (
+                  {chat.latestMessage && (
                     <Text fontSize="xs" overflow="hidden">
-                      <b>{chat.latestMessage.sender.name} : </b>
-                      {chat.latestMessage.content.length > 50
-                        ? chat.latestMessage.content.substring(0, 51) + "..."
+                      <b>{chat.latestMessage.sender?.name} : </b>
+                      {chat.latestMessage.content?.length > 24
+                        ? chat.latestMessage.content?.substring(0, 25) + "..."
                         : chat.latestMessage.content}
                     </Text>
-                  )} */}
+                  )}
                 </Box>
               </Box>
             ))}

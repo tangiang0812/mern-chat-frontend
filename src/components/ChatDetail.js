@@ -42,6 +42,7 @@ function ChatDetail() {
       if (data) {
         if (selectedUser._id === user._id) {
           setSelectedChat();
+          setPreviousSelectedChat();
           setChats((prevChatState) => {
             const newChatState = prevChatState.filter(
               (chat) => chat._id !== data._id
