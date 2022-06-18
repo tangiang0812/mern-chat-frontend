@@ -148,6 +148,7 @@ function ChatDetail() {
             colorScheme="red"
             w="100%"
             isLoading={removeLoading}
+            variant="ghost"
           >
             <ArrowLeftIcon mr={3} />
             Leave group

@@ -56,14 +56,6 @@ function Login() {
     });
   };
 
-  // function handleLogin(e) {
-  //   e.preventDefault();
-  // }
-
-  useEffect(() => {
-    console.log(email, password);
-  }, [email, password]);
-
   return (
     <Container maxW="xl" centerContent>
       <Box

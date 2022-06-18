@@ -17,7 +17,7 @@ function App() {
   const [chats, setChats] = useState([]);
   const [showDetail, setShowDetail] = useState(false);
   const [fetchAgain, setFetchAgain] = useState(false);
-  // const [notification, setNotification] = useState([]);
+  const [notifications, setNotifications] = useState([]);
 
   return (
     <AppContext.Provider
@@ -32,8 +32,8 @@ function App() {
         setFetchAgain,
         previousSelectedChat,
         setPreviousSelectedChat,
-        // notifications,
-        // setNotifications,
+        notifications,
+        setNotifications,
       }}
     >
       <BrowserRouter>

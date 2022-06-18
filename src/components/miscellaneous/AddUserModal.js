@@ -131,8 +131,6 @@ function AddUserModal({ children }) {
           });
           return newChatState;
         });
-        // setFetchAgain(!fetchAgain);
-        // setChats([data, ...chats]);
         handleClose();
         toast({
           title: "Add user(s) successfully",

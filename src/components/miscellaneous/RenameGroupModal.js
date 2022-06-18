@@ -69,8 +69,6 @@ function RenameGroupModal({ children }) {
           });
           return newChatState;
         });
-        // setFetchAgain(!fetchAgain);
-        // setChats([data, ...chats]);
         handleClose();
         toast({
           title: "Renamed group chat",

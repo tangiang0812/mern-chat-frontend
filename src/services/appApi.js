@@ -113,6 +113,21 @@ const appApi = createApi({
         body: payload,
       }),
     }),
+
+    updateNotifications: builder.mutation({
+      query: (payload) => ({
+        url: "/api/user/notif",
+        method: "POST",
+        body: payload,
+      }),
+    }),
+
+    fetchNotifications: builder.query({
+      query: () => ({
+        url: "/api/user/notif",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -120,7 +135,6 @@ export const {
   useSignupUserMutation,
   useLoginUserMutation,
   useLogoutUserMutation,
-  // useFetchChatsQuery,
   useLazyFetchChatsQuery,
   useLazySearchUsersQuery,
   useAccessChatMutation,
@@ -130,6 +144,8 @@ export const {
   useAddToGroupMutation,
   useLazyFetchMessagesQuery,
   useSendMessageMutation,
+  useUpdateNotificationsMutation,
+  useLazyFetchNotificationsQuery,
 } = appApi;
 
 export default appApi;

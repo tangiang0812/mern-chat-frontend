@@ -5,7 +5,10 @@ import { useSelector } from "react-redux";
 // import ChatLoading from "./ChatLoading";
 import { getSender } from "../config/ChatLogics";
 import { AppContext } from "../context/appContext";
-import { useLazyFetchChatsQuery } from "../services/appApi";
+import {
+  useLazyFetchChatsQuery,
+  useLazyFetchNotificationsQuery,
+} from "../services/appApi";
 
 import GroupChatModal from "./miscellaneous/GroupChatModal";
 import ChatLoading from "./UserAvater/ChatLoading";
@@ -29,6 +32,8 @@ function Sidebar() {
     fetchChats,
     { isFetching: fetchFetching, isLoading: fetchLoading, error: fetchError },
   ] = useLazyFetchChatsQuery();
+
+  const [fetchNotification] = useLazyFetchNotificationsQuery();
 
   const chatRef = useRef(null);
 
@@ -55,12 +60,6 @@ function Sidebar() {
           }
           found ? setSelectedChat(chat) : setSelectedChat();
         }
-        // console.log(
-        //   chats.find((chat) => selectedChat && chat._id === selectedChat._id)
-        // );
-        // setSelectedChat(
-        //   chats.find((chat) => selectedChat && chat._id === selectedChat._id) // this one will not work bc return value of find is selectedChat not chat
-        // );
       } else if (error) {
         toast({
           title: "Error fetching chats",
@@ -81,6 +80,16 @@ function Sidebar() {
   useEffect(() => {
     scrollIntoView();
   }, [selectedChat, chats]);
+
+  useEffect(() => {
+    fetchNotification().then(({ data, error }) => {
+      if (data) {
+        console.log(data);
+      } else if (error) {
+        console.log(error.data.message);
+      }
+    });
+  }, []);
 
   return (
     <Box
@@ -146,13 +155,13 @@ function Sidebar() {
                   // src={chat.users[0].picture}
                 />
                 <Box overflow="hidden" display="flex" flexDir="column">
-                  <Text overflow="hidden">
+                  <Text overflow="hidden" noOfLines={1}>
                     {!chat.isGroupChat
                       ? getSender(user, chat.users).name
                       : chat.chatName}
                   </Text>
                   {chat.latestMessage && (
-                    <Text fontSize="xs" overflow="hidden">
+                    <Text fontSize="xs" overflow="hidden" noOfLines={1}>
                       <b>{chat.latestMessage.sender?.name} : </b>
                       {chat.latestMessage.content?.length > 24
                         ? chat.latestMessage.content?.substring(0, 25) + "..."

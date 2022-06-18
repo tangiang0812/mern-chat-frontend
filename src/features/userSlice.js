@@ -4,10 +4,10 @@ import appApi from "../services/appApi";
 export const userSlice = createSlice({
   name: "user",
   initialState: null,
-  reducers: {
-    addNotifications: (state, { payload }) => {},
-    resetNotification: (state, { payload }) => {},
-  },
+  // reducers: {
+  //   addNotifications: (state, { payload }) => {},
+  //   resetNotification: (state, { payload }) => {},
+  // },
 
   extraReducers: (builder) => {
     // save user after signup
@@ -23,5 +23,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const { addNotifications, resetNotification } = userSlice.actions;
+// export const { addNotifications, resetNotification } = userSlice.actions;
 export default userSlice.reducer;

@@ -57,14 +57,6 @@ function Signup() {
     });
   };
 
-  // function handleSignup(e) {
-  //   e.preventDefault();
-  // }
-
-  useEffect(() => {
-    console.log(email, password, name);
-  }, [email, password, name]);
-
   return (
     <Container maxW="xl" centerContent>
       <Box

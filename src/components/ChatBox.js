@@ -26,8 +26,10 @@ import { useSelector } from "react-redux";
 import { getSender } from "../config/ChatLogics";
 import { AppContext } from "../context/appContext";
 import {
+  useLazyFetchChatsQuery,
   useLazyFetchMessagesQuery,
   useSendMessageMutation,
+  useUpdateNotificationsMutation,
 } from "../services/appApi";
 import ScrollableFeed from "./miscellaneous/ScrollableFeed";
 import io from "socket.io-client";
@@ -65,10 +67,8 @@ function ChatBox() {
     setShowDetail,
     setChats,
     chats,
-    // notifications,
-    // setNotifications,
-    fetchAgain,
-    setFetchAgain,
+    notifications,
+    setNotifications,
     previousSelectedChat,
     setSelectedChat,
   } = useContext(AppContext);
@@ -77,11 +77,13 @@ function ChatBox() {
 
   const user = useSelector((state) => state.user);
 
-  const [sendMessage, { isLoading: sendLoading, error: sendErorr }] =
-    useSendMessageMutation();
+  const [sendMessage] = useSendMessageMutation();
 
-  const [fetchMessages, { isFetching: fetchFetching, error: fetchError }] =
-    useLazyFetchMessagesQuery();
+  const [fetchMessages] = useLazyFetchMessagesQuery();
+
+  const [fetchChats] = useLazyFetchChatsQuery();
+
+  const [updateNotifications] = useUpdateNotificationsMutation();
 
   const typingHandler = (msg) => {};
 
@@ -106,7 +108,7 @@ function ChatBox() {
         setChats((previousChatState) => {
           const newChatState = previousChatState.map((chat) => {
             let newChat = chat;
-            if (chat._id === data.chat) {
+            if (chat._id === data.chat._id) {
               newChat = { ...chat, latestMessage: data };
             }
             return newChat;
@@ -174,6 +176,23 @@ function ChatBox() {
     });
   };
 
+  const handleFetchChats = async (chatId) => {
+    fetchChats(chatId).then(({ data, error }) => {
+      if (data) {
+        setChats((previousChatState) => [data[0], ...previousChatState]);
+      } else if (error) {
+        toast({
+          title: "Error fetching chats",
+          description: error.data.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom-left",
+        });
+      }
+    });
+  };
+
   useEffect(() => {
     socket = io(ENDPOINT, {
       auth: {
@@ -195,39 +214,51 @@ function ChatBox() {
   }, [selectedChat]);
 
   useEffect(() => {
-    socket.off("message-received").on("message-received", (receivedMessage) => {
-      if (
-        !previousSelectedChat ||
-        previousSelectedChat._id !== receivedMessage.chat
-      ) {
-        if (!chats.find((chat) => chat._id === receivedMessage.chat)) {
-          return setFetchAgain(!fetchAgain);
-        }
-        // if (!notifications.includes(receivedMessage)) {
-        //   setNotifications([receivedMessage, ...notifications]);
-        //   // setFetchAgain(!fetchAgain);
-        // }
-      } else {
-        dispatch({
-          type: ACTIONS.ADD_MESSAGE,
-          payload: { newMessage: receivedMessage },
-        });
-      }
-      setChats((previousChatState) => {
-        const newChatState = previousChatState.map((chat) => {
-          let newChat = chat;
-          if (chat._id === receivedMessage.chat) {
-            newChat = { ...chat, latestMessage: receivedMessage };
-            if (selectedChat && newChat._id === selectedChat._id) {
-              setSelectedChat(newChat);
-            }
+    socket
+      .off("message-received")
+      .on("message-received", async (receivedMessage) => {
+        if (
+          !previousSelectedChat ||
+          previousSelectedChat._id !== receivedMessage.chat._id
+        ) {
+          if (!chats.find((chat) => chat._id === receivedMessage.chat._id)) {
+            return handleFetchChats(receivedMessage.chat._id);
           }
+          setNotifications((preNotifState) => [
+            receivedMessage,
+            ...preNotifState.filter(
+              (notif) => receivedMessage.chat._id !== notif.chat._id
+            ),
+          ]);
+          console.log(receivedMessage);
+          updateNotifications({ receivedMessage }).then(({ data, error }) => {
+            if (data) {
+              console.log(data);
+            } else if (error) {
+              console.log(error.data.message);
+            }
+          });
+        } else {
+          dispatch({
+            type: ACTIONS.ADD_MESSAGE,
+            payload: { newMessage: receivedMessage },
+          });
+        }
+        setChats((previousChatState) => {
+          const newChatState = previousChatState.map((chat) => {
+            let newChat = chat;
+            if (chat._id === receivedMessage.chat._id) {
+              newChat = { ...chat, latestMessage: receivedMessage };
+              if (selectedChat && newChat._id === selectedChat._id) {
+                setSelectedChat(newChat);
+              }
+            }
 
-          return newChat;
+            return newChat;
+          });
+          return newChatState;
         });
-        return newChatState;
       });
-    });
   });
 
   return (
