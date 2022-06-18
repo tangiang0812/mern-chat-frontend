@@ -29,7 +29,6 @@ import {
   useLazyFetchChatsQuery,
   useLazyFetchMessagesQuery,
   useSendMessageMutation,
-  useUpdateNotificationsMutation,
 } from "../services/appApi";
 import ScrollableFeed from "./miscellaneous/ScrollableFeed";
 import io from "socket.io-client";
@@ -67,8 +66,6 @@ function ChatBox() {
     setShowDetail,
     setChats,
     chats,
-    notifications,
-    setNotifications,
     previousSelectedChat,
     setSelectedChat,
   } = useContext(AppContext);
@@ -82,8 +79,6 @@ function ChatBox() {
   const [fetchMessages] = useLazyFetchMessagesQuery();
 
   const [fetchChats] = useLazyFetchChatsQuery();
-
-  const [updateNotifications] = useUpdateNotificationsMutation();
 
   const typingHandler = (msg) => {};
 
@@ -224,20 +219,6 @@ function ChatBox() {
           if (!chats.find((chat) => chat._id === receivedMessage.chat._id)) {
             return handleFetchChats(receivedMessage.chat._id);
           }
-          setNotifications((preNotifState) => [
-            receivedMessage,
-            ...preNotifState.filter(
-              (notif) => receivedMessage.chat._id !== notif.chat._id
-            ),
-          ]);
-          console.log(receivedMessage);
-          updateNotifications({ receivedMessage }).then(({ data, error }) => {
-            if (data) {
-              console.log(data);
-            } else if (error) {
-              console.log(error.data.message);
-            }
-          });
         } else {
           dispatch({
             type: ACTIONS.ADD_MESSAGE,

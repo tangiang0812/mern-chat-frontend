@@ -1,6 +1,5 @@
 import {
   Avatar,
-  Badge,
   Box,
   Button,
   Menu,
@@ -19,8 +18,7 @@ import { AppContext } from "../context/appContext";
 
 function Navigation() {
   const user = useSelector((state) => state.user);
-  const { setSelectedChat, setChats, notifications, setNotifications } =
-    useContext(AppContext);
+  const { setSelectedChat, setChats } = useContext(AppContext);
   const [logoutUser, { isLoading, error }] = useLogoutUserMutation();
 
   const handleLogout = async (event) => {
@@ -57,26 +55,6 @@ function Navigation() {
 
       {user && (
         <div>
-          <Menu>
-            <MenuButton p={1}>
-              {notifications.length > 0 && (
-                <Badge ml="1" colorScheme="red" variant="subtle">
-                  {notifications.length}
-                </Badge>
-              )}
-              <BellIcon fontSize="2xl" m={1}></BellIcon>
-            </MenuButton>
-            <MenuList>
-              {!notifications.length && <MenuItem>No new messages</MenuItem>}
-              {notifications.map((notification) => (
-                <MenuItem key={notification._id}>
-                  {notification.chat.isGroupChat
-                    ? `New message in ${notification.chat.chatName}`
-                    : `New message from ${notification.sender.name}`}
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
           <Menu>
             <MenuButton
               m={1}

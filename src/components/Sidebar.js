@@ -5,10 +5,7 @@ import { useSelector } from "react-redux";
 // import ChatLoading from "./ChatLoading";
 import { getSender } from "../config/ChatLogics";
 import { AppContext } from "../context/appContext";
-import {
-  useLazyFetchChatsQuery,
-  useLazyFetchNotificationsQuery,
-} from "../services/appApi";
+import { useLazyFetchChatsQuery } from "../services/appApi";
 
 import GroupChatModal from "./miscellaneous/GroupChatModal";
 import ChatLoading from "./UserAvater/ChatLoading";
@@ -32,8 +29,6 @@ function Sidebar() {
     fetchChats,
     { isFetching: fetchFetching, isLoading: fetchLoading, error: fetchError },
   ] = useLazyFetchChatsQuery();
-
-  const [fetchNotification] = useLazyFetchNotificationsQuery();
 
   const chatRef = useRef(null);
 
@@ -80,16 +75,6 @@ function Sidebar() {
   useEffect(() => {
     scrollIntoView();
   }, [selectedChat, chats]);
-
-  useEffect(() => {
-    fetchNotification().then(({ data, error }) => {
-      if (data) {
-        console.log(data);
-      } else if (error) {
-        console.log(error.data.message);
-      }
-    });
-  }, []);
 
   return (
     <Box
